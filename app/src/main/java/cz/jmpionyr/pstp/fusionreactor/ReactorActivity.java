@@ -1,7 +1,10 @@
 package cz.jmpionyr.pstp.fusionreactor;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import cz.jmpionyr.pstp.fusionreactor.reactor.MainFragment;
 
@@ -32,5 +35,10 @@ public class ReactorActivity extends Activity {
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }
+    }
+
+    public void startExperiment(View view) {
+        Intent intent = new Intent(this, ExperimentActivity.class);
+        startActivity(intent);
     }
 }
