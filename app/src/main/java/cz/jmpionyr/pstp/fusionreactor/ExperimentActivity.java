@@ -1,6 +1,7 @@
 package cz.jmpionyr.pstp.fusionreactor;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -37,20 +38,20 @@ public class ExperimentActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            Random random = new Random();
-            experiment_id = random.nextInt(90000) + 10000;
+        // Set up the instance state.
+        if (savedInstanceState != null) {
+            loadInstanceState(savedInstanceState);
         }
         else {
-            experiment_id = savedInstanceState.getInt(EXPERIMENT_ID);
-            first_reactant = savedInstanceState.getString(FIRST_REACTANT);
-            second_reactant = savedInstanceState.getString(SECOND_REACTANT);
+            Random random = new Random();
+            experiment_id = random.nextInt(90000) + 10000;
         }
 
         detector = new BarcodeDetector.Builder(getApplicationContext())
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
 
+        // Set up the view.
         setContentView(R.layout.activity_experiment);
         TextView textView = findViewById(R.id.experiment_id);
         textView.setText(String.format(Locale.getDefault(), "Experiment: #%d", experiment_id));
@@ -67,17 +68,15 @@ public class ExperimentActivity extends Activity {
             }
 
             // Create a new Fragment to be placed in the activity layout
-            LoadFragment fragment = new LoadFragment();
-
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
+            switchFragments(new LoadFragment());
         }
     }
 
-    public void loadQRCode(View view) {
+    public void onLoadQRCode(View view) {
+        loadQRCode();
+    }
+
+    protected void loadQRCode() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, 1);
@@ -106,47 +105,51 @@ public class ExperimentActivity extends Activity {
             }
 
             Barcode barcode = barcodes.valueAt(0);
-
-            if (first_reactant == null) {
-                first_reactant = barcode.displayValue;
-                Toast.makeText(this, String.format("Detekován reaktant #1: %s", first_reactant), Toast.LENGTH_SHORT).show();
-            }
-            else if (second_reactant == null) {
-                second_reactant = barcode.displayValue;
-                Toast.makeText(this, String.format("Detekován reaktant #2: %s", second_reactant), Toast.LENGTH_SHORT).show();
-            }
-            else {
-                Toast.makeText(this, "Nelze nastavit reaktant.", Toast.LENGTH_SHORT).show();
-            }
+            setReactant(barcode.displayValue);
         }
 
         if (first_reactant != null && second_reactant != null) {
-            ReadyFragment fragment = new ReadyFragment();
-
-            Bundle args = new Bundle();
-            args.putString(FIRST_REACTANT, first_reactant);
-            args.putString(SECOND_REACTANT, second_reactant);
-            fragment.setArguments(args);
-
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
+            switchFragments(new ReadyFragment());
         }
     }
 
-    public void runExperiment(View view) {
-        RunFragment fragment = new RunFragment();
+    protected void setReactant(String reactant) {
+        String message = "Nelze nastavit reaktant.";
 
+        if (first_reactant == null) {
+            first_reactant = reactant;
+            message = String.format("Nastaven reaktant #1: %s", reactant);
+        }
+        else if (second_reactant == null) {
+            second_reactant = reactant;
+            message = String.format("Nastaven reaktant #2: %s", reactant);
+        }
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void onRunExperiment(View view) {
+        switchFragments(new RunFragment());
+    }
+
+    protected void switchFragments(Fragment fragment) {
         Bundle args = new Bundle();
+        args.putInt(EXPERIMENT_ID, experiment_id);
         args.putString(FIRST_REACTANT, first_reactant);
         args.putString(SECOND_REACTANT, second_reactant);
+
         fragment.setArguments(args);
 
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();
+    }
+
+    protected void loadInstanceState(Bundle savedInstanceState) {
+        experiment_id = savedInstanceState.getInt(EXPERIMENT_ID);
+        first_reactant = savedInstanceState.getString(FIRST_REACTANT);
+        second_reactant = savedInstanceState.getString(SECOND_REACTANT);
     }
 
     @Override
