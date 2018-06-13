@@ -7,12 +7,12 @@
     tools:context=".ExperimentActivity">
 
     <TextView
-        android:id="@+id/reaktor_text_view"
+        android:id="@+id/experiment_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="monospace"
-        android:text="Experiment: #12345"
+        android:text="Experiment: #123"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +30,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reaktor_text_view">
+        app:layout_constraintTop_toBottomOf="@+id/experiment_id">
 
     </FrameLayout>
 
