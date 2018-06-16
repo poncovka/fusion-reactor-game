@@ -28,11 +28,14 @@ public class ExperimentActivity extends Activity {
     public static final String EXPERIMENT_ID = "experimentId";
     public static final String FIRST_REACTANT = "firstReactant";
     public static final String SECOND_REACTANT = "secondReactant";
+    public static final String PRODUCT = "product";
 
     private int experiment_id;
     private String first_reactant;
     private String second_reactant;
     private BarcodeDetector detector;
+
+    private boolean testing = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,14 @@ public class ExperimentActivity extends Activity {
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
             if (savedInstanceState != null) {
+                return;
+            }
+
+            // Skip loading QR codes in the testing mode.
+            if (testing) {
+                setReactant("VODA");
+                setReactant("ZEME");
+                switchFragments(new RunFragment());
                 return;
             }
 
