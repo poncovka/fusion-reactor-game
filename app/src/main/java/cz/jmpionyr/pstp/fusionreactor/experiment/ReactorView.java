@@ -7,6 +7,9 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 
 
 public class ReactorView extends View {
@@ -31,10 +34,28 @@ public class ReactorView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-
         mDrawable = new ShapeDrawable(new OvalShape());
         // If the color isn't set, the shape uses black as the default.
         mDrawable.getPaint().setColor(0xff2ad4ff);
+
+        animateReactor();
+    }
+
+    private void animateReactor() {
+        RotateAnimation rotate = new RotateAnimation(
+                0,
+                360,
+                Animation.RELATIVE_TO_SELF,
+                0.5f,
+                Animation.RELATIVE_TO_SELF,
+                0.5f);
+
+        rotate.setRepeatCount(Animation.INFINITE);
+        //rotate.setStartOffset(1000);
+        rotate.setDuration(15000);
+        rotate.setInterpolator(new LinearInterpolator());
+
+        this.startAnimation(rotate);
     }
 
     @Override
@@ -44,15 +65,21 @@ public class ReactorView extends View {
         height = getHeight();
 
         int max_size = width < height ? width : height;
-        int size_unit = max_size / 10;
+        int size_unit = max_size / 25;
 
         // If the bounds aren't set, the shape can't be drawn.
-        moveCircle(mDrawable, size_unit * 6, 0, 0);
+        moveCircle(mDrawable, size_unit * 14, 0, 0);
         mDrawable.draw(canvas);
 
-        for (int i = 0; i < 360; i += 360/8) {
+        for (int i = 0; i < 360; i += 360/10) {
             // mDrawable.getPaint().setColor(0xff2004ff);
-            moveCircleOnSphere(mDrawable, size_unit, size_unit * 4,  i);
+            moveCircleOnSphere(mDrawable, size_unit * 2, size_unit * 11,  i);
+            mDrawable.draw(canvas);
+        }
+
+        for (int i = 0; i < 360; i += 360/15) {
+            // mDrawable.getPaint().setColor(0xff2004ff);
+            moveCircleOnSphere(mDrawable, size_unit, size_unit * 8,  i);
             mDrawable.draw(canvas);
         }
     }
