@@ -19,9 +19,11 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import java.util.Locale;
 import java.util.Random;
 
+import cz.jmpionyr.pstp.fusionreactor.experiment.FailureFragment;
 import cz.jmpionyr.pstp.fusionreactor.experiment.LoadFragment;
 import cz.jmpionyr.pstp.fusionreactor.experiment.ReadyFragment;
 import cz.jmpionyr.pstp.fusionreactor.experiment.RunFragment;
+import cz.jmpionyr.pstp.fusionreactor.experiment.SuccessFragment;
 
 public class ExperimentActivity extends Activity {
 
@@ -33,8 +35,9 @@ public class ExperimentActivity extends Activity {
     private int experiment_id;
     private String first_reactant;
     private String second_reactant;
-    private BarcodeDetector detector;
+    private String product;
 
+    private BarcodeDetector detector;
     private boolean testing = true;
 
     @Override
@@ -74,6 +77,7 @@ public class ExperimentActivity extends Activity {
             if (testing) {
                 setReactant("VODA");
                 setReactant("ZEME");
+                product = "REKA";
                 switchFragments(new RunFragment());
                 return;
             }
@@ -143,12 +147,21 @@ public class ExperimentActivity extends Activity {
         switchFragments(new RunFragment());
     }
 
+    public void onExperimentFinished() {
+        if (product == null) {
+            switchFragments(new FailureFragment());
+        }
+        else {
+            switchFragments(new SuccessFragment());
+        }
+    }
+
     protected void switchFragments(Fragment fragment) {
         Bundle args = new Bundle();
         args.putInt(EXPERIMENT_ID, experiment_id);
         args.putString(FIRST_REACTANT, first_reactant);
         args.putString(SECOND_REACTANT, second_reactant);
-
+        args.putString(PRODUCT, product);
         fragment.setArguments(args);
 
         getFragmentManager()
@@ -161,6 +174,7 @@ public class ExperimentActivity extends Activity {
         experiment_id = savedInstanceState.getInt(EXPERIMENT_ID);
         first_reactant = savedInstanceState.getString(FIRST_REACTANT);
         second_reactant = savedInstanceState.getString(SECOND_REACTANT);
+        product = savedInstanceState.getString(PRODUCT);
     }
 
     @Override
@@ -168,6 +182,7 @@ public class ExperimentActivity extends Activity {
         outState.putInt(EXPERIMENT_ID, experiment_id);
         outState.putString(FIRST_REACTANT, first_reactant);
         outState.putString(SECOND_REACTANT, second_reactant);
+        outState.putString(PRODUCT, product);
         super.onSaveInstanceState(outState);
     }
 
