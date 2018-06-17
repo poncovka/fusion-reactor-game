@@ -1,6 +1,7 @@
 package cz.jmpionyr.pstp.fusionreactor.experiment;
 
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
@@ -39,6 +40,5 @@ public class SuccessFragment extends Fragment {
         String product = args.getString(ExperimentActivity.PRODUCT);
         TextView text_view = getActivity().findViewById(R.id.product_text_view);
         text_view.setText(String.format("Vytvořen nový produkt: %s", product));
-
     }
 }

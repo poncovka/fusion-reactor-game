@@ -2,6 +2,7 @@ package cz.jmpionyr.pstp.fusionreactor.experiment;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
@@ -11,12 +12,15 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 
+import cz.jmpionyr.pstp.fusionreactor.R;
+
 
 public class ReactorView extends View {
 
     private ShapeDrawable mDrawable;
     private int width = 0;
     private int height = 0;
+    private Animation animation;
 
     public ReactorView(Context context) {
         super(context);
@@ -36,12 +40,11 @@ public class ReactorView extends View {
     private void init(AttributeSet attrs, int defStyle) {
         mDrawable = new ShapeDrawable(new OvalShape());
         // If the color isn't set, the shape uses black as the default.
-        mDrawable.getPaint().setColor(0xff2ad4ff);
-
-        animateReactor();
+        // int color = getResources().getColor(R.color.accent_material_dark);
+        mDrawable.getPaint().setColor(0xff20cdf4);
     }
 
-    private void animateReactor() {
+    public void startReactorAnimation() {
         RotateAnimation rotate = new RotateAnimation(
                 0,
                 360,
@@ -51,11 +54,16 @@ public class ReactorView extends View {
                 0.5f);
 
         rotate.setRepeatCount(Animation.INFINITE);
-        //rotate.setStartOffset(1000);
         rotate.setDuration(15000);
         rotate.setInterpolator(new LinearInterpolator());
 
         this.startAnimation(rotate);
+        animation = rotate;
+    }
+
+    public void stopReactorAnimation() {
+        //animation.cancel();
+        this.clearAnimation();
     }
 
     @Override

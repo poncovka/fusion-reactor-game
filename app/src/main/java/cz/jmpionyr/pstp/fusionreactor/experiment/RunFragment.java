@@ -1,6 +1,7 @@
 package cz.jmpionyr.pstp.fusionreactor.experiment;
 
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.Locale;
+import java.util.Random;
 
 import cz.jmpionyr.pstp.fusionreactor.ExperimentActivity;
 import cz.jmpionyr.pstp.fusionreactor.R;
@@ -22,6 +24,9 @@ public class RunFragment extends Fragment {
 
     public static final String PERCENTS = "experimentPercents";
     private int percents;
+    private boolean failure;
+
+    private MediaPlayer backgroundPlayer;
 
     Handler experiment_handler = new Handler();
     private final Runnable experiment_runnable = new Runnable() {
@@ -30,16 +35,87 @@ public class RunFragment extends Fragment {
 
             percents += 1;
 
-            ExperimentActivity activity = (ExperimentActivity) getActivity();
+            final ExperimentActivity activity = (ExperimentActivity) getActivity();
+
+            if (percents > 100) {
+                activity.onExperimentFinished();
+                return;
+            }
+
             TextView percents_text_view = activity.findViewById(R.id.percents_text_view);
             percents_text_view.setText(String.format(Locale.getDefault(), "%d%%", percents));
+            ReactorView reactor_view = activity.findViewById(R.id.reactor_view);
 
-            if (percents < 100) {
-                experiment_handler.postDelayed(experiment_runnable, 1000);
+            if (percents == 100) {
+                backgroundPlayer.stop();
+
+                MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.final_alert);
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        ReactorView reactor_view = getActivity().findViewById(R.id.reactor_view);
+                        reactor_view.stopReactorAnimation();
+
+                        MediaPlayer mediaPlayer = MediaPlayer.create(getActivity() , R.raw.experiment_successful);
+                        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                experiment_handler.post(experiment_runnable);
+                            }
+                        });
+                        mediaPlayer.start();
+                    }
+                });
+                mediaPlayer.start();
+                return;
             }
-            else {
-                activity.onExperimentFinished();
+
+            if (percents == 1) {
+                reactor_view.startReactorAnimation();
+
+                backgroundPlayer = MediaPlayer.create(getActivity() , R.raw.reactor);
+                backgroundPlayer.start();
+
+                MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.experiment_started);
+                mediaPlayer.start();
             }
+            else if (percents == 26) {
+                MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.compatibility_testing);
+                mediaPlayer.start();
+            }
+            else if (percents == 48 && failure) {
+                MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.hard_alert);
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        backgroundPlayer.stop();
+
+                        MediaPlayer mediaPlayer = MediaPlayer.create(getActivity() , R.raw.compatibility_error);
+                        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                ((ExperimentActivity) getActivity()).onExperimentFinished();
+                            }
+                        });
+                        mediaPlayer.start();
+                    }
+                });
+                mediaPlayer.start();
+                return;
+            }
+            else if (percents == 48) {
+                MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.reactor_works_89);
+                mediaPlayer.start();
+            }
+            else if (percents == 71) {
+                MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.radiation_leak_warning);
+                mediaPlayer.start();
+            }
+
+            Random random = new Random();
+            int delay = random.nextInt(300);
+
+            experiment_handler.postDelayed(experiment_runnable, delay);
         }
     };
 
@@ -59,6 +135,10 @@ public class RunFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        Bundle args = getArguments();
+        String product = args.getString(ExperimentActivity.PRODUCT);
+        failure = product == null;
+
         if (savedInstanceState != null) {
             percents = savedInstanceState.getInt(PERCENTS);
         }
@@ -69,7 +149,14 @@ public class RunFragment extends Fragment {
         TextView percents_text_view = getActivity().findViewById(R.id.percents_text_view);
         percents_text_view.setText(String.format(Locale.getDefault(), "%d%%", percents));
 
-        experiment_handler.postDelayed(experiment_runnable, 1000);
+        MediaPlayer mediaPlayer = MediaPlayer.create(getActivity() , R.raw.experiment_starts);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                experiment_handler.post(experiment_runnable);
+            }
+        });
+        mediaPlayer.start();
     }
 
     @Override
@@ -81,6 +168,12 @@ public class RunFragment extends Fragment {
     @Override
     public void onDetach() {
         experiment_handler.removeCallbacksAndMessages(null);
+
+        if (backgroundPlayer != null) {
+            backgroundPlayer.release();
+            backgroundPlayer = null;
+        }
+
         super.onDetach();
     }
 }
