@@ -41,7 +41,7 @@ public class ReactorView extends View {
         mDrawable = new ShapeDrawable(new OvalShape());
         // If the color isn't set, the shape uses black as the default.
         // int color = getResources().getColor(R.color.accent_material_dark);
-        mDrawable.getPaint().setColor(0xff20cdf4);
+        mDrawable.getPaint().setColor(0xff00c5d4);
     }
 
     public void startReactorAnimation() {

@@ -41,7 +41,7 @@
             android:fontFamily="sans-serif-condensed"
             android:text="100%"
             android:textAlignment="center"
-            android:textSize="80dp"
+            android:textSize="70dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

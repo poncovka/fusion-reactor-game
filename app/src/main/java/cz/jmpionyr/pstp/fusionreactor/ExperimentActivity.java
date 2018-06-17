@@ -77,7 +77,7 @@ public class ExperimentActivity extends Activity {
             if (testing) {
                 setReactant("VODA");
                 setReactant("ZEME");
-                product = "REKA";
+                //product = "REKA";
                 switchFragments(new RunFragment());
                 return;
             }
