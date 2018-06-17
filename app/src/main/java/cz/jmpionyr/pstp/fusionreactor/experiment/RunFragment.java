@@ -37,6 +37,10 @@ public class RunFragment extends Fragment {
 
             final ExperimentActivity activity = (ExperimentActivity) getActivity();
 
+            if (activity == null) {
+                return;
+            }
+
             if (percents > 100) {
                 activity.onExperimentFinished();
                 return;
@@ -50,16 +54,18 @@ public class RunFragment extends Fragment {
                 backgroundPlayer.stop();
 
                 MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.final_alert);
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+                        super.onCompletion(mp);
                         ReactorView reactor_view = getActivity().findViewById(R.id.reactor_view);
                         reactor_view.stopReactorAnimation();
 
                         MediaPlayer mediaPlayer = MediaPlayer.create(getActivity() , R.raw.experiment_successful);
-                        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
+                                super.onCompletion(mp);
                                 experiment_handler.post(experiment_runnable);
                             }
                         });
@@ -77,23 +83,27 @@ public class RunFragment extends Fragment {
                 backgroundPlayer.start();
 
                 MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.experiment_started);
+                mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser());
                 mediaPlayer.start();
             }
             else if (percents == 26) {
                 MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.compatibility_testing);
+                mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser());
                 mediaPlayer.start();
             }
             else if (percents == 48 && failure) {
                 MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.hard_alert);
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+                        super.onCompletion(mp);
                         backgroundPlayer.stop();
 
                         MediaPlayer mediaPlayer = MediaPlayer.create(getActivity() , R.raw.compatibility_error);
-                        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
+                                super.onCompletion(mp);
                                 ((ExperimentActivity) getActivity()).onExperimentFinished();
                             }
                         });
@@ -105,10 +115,12 @@ public class RunFragment extends Fragment {
             }
             else if (percents == 48) {
                 MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.reactor_works_89);
+                mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser());
                 mediaPlayer.start();
             }
             else if (percents == 71) {
                 MediaPlayer mediaPlayer = MediaPlayer.create(activity , R.raw.radiation_leak_warning);
+                mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser());
                 mediaPlayer.start();
             }
 
@@ -150,9 +162,10 @@ public class RunFragment extends Fragment {
         percents_text_view.setText(String.format(Locale.getDefault(), "%d%%", percents));
 
         MediaPlayer mediaPlayer = MediaPlayer.create(getActivity() , R.raw.experiment_starts);
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        mediaPlayer.setOnCompletionListener(new MediaPlayerReleaser() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                super.onCompletion(mp);
                 experiment_handler.post(experiment_runnable);
             }
         });
@@ -175,5 +188,15 @@ public class RunFragment extends Fragment {
         }
 
         super.onDetach();
+    }
+}
+
+class MediaPlayerReleaser implements MediaPlayer.OnCompletionListener {
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        if (mp != null) {
+            mp.release();
+        }
     }
 }

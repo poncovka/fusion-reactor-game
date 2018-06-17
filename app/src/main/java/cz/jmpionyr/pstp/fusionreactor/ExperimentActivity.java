@@ -22,6 +22,7 @@ import java.util.Random;
 import cz.jmpionyr.pstp.fusionreactor.experiment.FailureFragment;
 import cz.jmpionyr.pstp.fusionreactor.experiment.LoadFragment;
 import cz.jmpionyr.pstp.fusionreactor.experiment.ReadyFragment;
+import cz.jmpionyr.pstp.fusionreactor.experiment.ResultData;
 import cz.jmpionyr.pstp.fusionreactor.experiment.RunFragment;
 import cz.jmpionyr.pstp.fusionreactor.experiment.SuccessFragment;
 
@@ -37,8 +38,9 @@ public class ExperimentActivity extends Activity {
     private String second_reactant;
     private String product;
 
+    private ResultData result_data;
     private BarcodeDetector detector;
-    private boolean testing = true;
+    private boolean testing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,8 @@ public class ExperimentActivity extends Activity {
         detector = new BarcodeDetector.Builder(getApplicationContext())
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
+
+        result_data = new ResultData();
 
         // Set up the view.
         setContentView(R.layout.activity_experiment);
@@ -75,10 +79,9 @@ public class ExperimentActivity extends Activity {
 
             // Skip loading QR codes in the testing mode.
             if (testing) {
-                setReactant("VODA");
-                setReactant("ZEME");
-                //product = "REKA";
-                switchFragments(new RunFragment());
+                first_reactant = "OHEN";
+                second_reactant = "VZDUCH";
+                onRunExperiment(null);
                 return;
             }
 
@@ -144,6 +147,7 @@ public class ExperimentActivity extends Activity {
     }
 
     public void onRunExperiment(View view) {
+        product = result_data.get(first_reactant, second_reactant);
         switchFragments(new RunFragment());
     }
 
