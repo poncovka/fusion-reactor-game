@@ -1,4 +1,4 @@
-package cz.jmpionyr.pstp.fusionreactor;
+package cz.jmpionyr.pstp.fusionreactor.experiment;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
@@ -19,12 +18,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import java.util.Locale;
 import java.util.Random;
 
-import cz.jmpionyr.pstp.fusionreactor.experiment.FailureFragment;
-import cz.jmpionyr.pstp.fusionreactor.experiment.LoadFragment;
-import cz.jmpionyr.pstp.fusionreactor.experiment.ReadyFragment;
-import cz.jmpionyr.pstp.fusionreactor.experiment.ResultData;
-import cz.jmpionyr.pstp.fusionreactor.experiment.RunFragment;
-import cz.jmpionyr.pstp.fusionreactor.experiment.SuccessFragment;
+import cz.jmpionyr.pstp.fusionreactor.R;
 
 public class ExperimentActivity extends Activity {
 

@@ -9,9 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Locale;
-
-import cz.jmpionyr.pstp.fusionreactor.ExperimentActivity;
 import cz.jmpionyr.pstp.fusionreactor.R;
 
 /**

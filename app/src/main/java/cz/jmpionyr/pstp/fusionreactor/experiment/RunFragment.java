@@ -14,7 +14,6 @@ import android.widget.TextView;
 import java.util.Locale;
 import java.util.Random;
 
-import cz.jmpionyr.pstp.fusionreactor.ExperimentActivity;
 import cz.jmpionyr.pstp.fusionreactor.R;
 
 /**
