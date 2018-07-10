@@ -2,6 +2,7 @@ package cz.jmpionyr.pstp.fusionreactor.loader;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -35,6 +36,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import java.util.Collections;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
+import cz.jmpionyr.pstp.fusionreactor.experiment.ExperimentActivity;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -110,6 +112,11 @@ public class LoaderActivity extends Activity {
         public boolean handleMessage(Message msg) {
             String reactant = (String) msg.obj;
             setReactant(reactant);
+
+            // TODO: Don't do this here.
+            tryToFinish();
+
+            // Return true, because the message was processed.
             return true;
         }
     };
@@ -128,6 +135,17 @@ public class LoaderActivity extends Activity {
 
         Log.d(TAG, message);
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    protected void tryToFinish() {
+        if (first_reactant != null && second_reactant != null) {
+            Intent result = new Intent();
+            result.putExtra(ExperimentActivity.FIRST_REACTANT, first_reactant);
+            result.putExtra(ExperimentActivity.SECOND_REACTANT, second_reactant);
+
+            setResult(RESULT_OK, result);
+            finish();
+        }
     }
 
     @Override

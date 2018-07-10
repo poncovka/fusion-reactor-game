@@ -46,19 +46,33 @@ public class ReactorActivity extends Activity {
         startActivityForResult(intent, LoaderActivity.LOAD_QR_CODES_REQUEST);
     }
 
+    private void runExperiment(String first, String second) {
+        Intent intent = new Intent(this, ExperimentActivity.class);
+        intent.putExtra(ExperimentActivity.FIRST_REACTANT, first);
+        intent.putExtra(ExperimentActivity.SECOND_REACTANT, second);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LoaderActivity.LOAD_QR_CODES_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                String first = data.getStringExtra(ExperimentActivity.FIRST_REACTANT);
+                String second = data.getStringExtra(ExperimentActivity.SECOND_REACTANT);
+                runExperiment(first, second);
+            }
+        }
+    }
+
     public void testSuccessfulExperiment(View view) {
         Log.d(TAG, "Starting suceessful experiment.");
-        Intent intent = new Intent(this, ExperimentActivity.class);
-        intent.putExtra(ExperimentActivity.FIRST_REACTANT, "OHEN");
-        intent.putExtra(ExperimentActivity.SECOND_REACTANT, "VZDUCH");
-        startActivity(intent);
+        runExperiment("OHEN", "VZDUCH");
     }
 
     public void testUnsuccessfulExperiment(View view) {
         Log.d(TAG, "Starting unsuccessful experiment");
-        Intent intent = new Intent(this, ExperimentActivity.class);
-        intent.putExtra(ExperimentActivity.FIRST_REACTANT, "OHEN");
-        intent.putExtra(ExperimentActivity.SECOND_REACTANT, "ENERGIE");
-        startActivity(intent);
+        runExperiment("OHEN", "ENERGIE");
     }
 }
