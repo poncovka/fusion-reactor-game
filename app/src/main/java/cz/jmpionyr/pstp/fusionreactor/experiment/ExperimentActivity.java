@@ -3,17 +3,10 @@ package cz.jmpionyr.pstp.fusionreactor.experiment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.util.Locale;
 import java.util.Random;
@@ -33,7 +26,6 @@ public class ExperimentActivity extends Activity {
     private String product;
 
     private ResultData result_data;
-    private boolean testing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +38,10 @@ public class ExperimentActivity extends Activity {
         else {
             Random random = new Random();
             experiment_id = random.nextInt(90000) + 10000;
+
+            Intent intent = getIntent();
+            first_reactant = intent.getStringExtra(FIRST_REACTANT);
+            second_reactant = intent.getStringExtra(SECOND_REACTANT);
         }
 
         result_data = new ResultData();
@@ -66,35 +62,10 @@ public class ExperimentActivity extends Activity {
                 return;
             }
 
-            // Skip loading QR codes in the testing mode.
-            if (testing) {
-                first_reactant = "OHEN";
-                second_reactant = "VZDUCH";
-                onRunExperiment(null);
-                return;
-            }
-
             // Create a new Fragment to be placed in the activity layout
-            switchFragments(new LoadFragment());
-        }
-    }
-
-    public void onLoadQRCode(View view) {
-        loadQRCode();
-    }
-
-    protected void loadQRCode() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, 1);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (first_reactant != null && second_reactant != null) {
-            switchFragments(new ReadyFragment());
+            if (first_reactant != null && second_reactant != null) {
+                switchFragments(new ReadyFragment());
+            }
         }
     }
 
