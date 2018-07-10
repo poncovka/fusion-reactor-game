@@ -39,6 +39,6 @@ public class ReactorActivity extends Activity {
 
     public void startExperiment(View view) {
         Intent intent = new Intent(this, LoaderActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, LoaderActivity.LOAD_QR_CODES_REQUEST);
     }
 }

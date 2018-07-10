@@ -42,12 +42,17 @@ import cz.jmpionyr.pstp.fusionreactor.R;
  */
 public class LoaderActivity extends Activity {
 
+    public static final int LOAD_QR_CODES_REQUEST = 1;
+
+    private static final String TAG = "LoaderActivity";
+    private static final int CAMERA_PERMISSION_REQUEST = 1;
+    private static final int DETECT_CODE_MESSAGE = 1;
+    private static final int SET_REACTANT_MESSAGE = 2;
+
     private String first_reactant;
     private String second_reactant;
 
-    private final String TAG = "LoaderActivity";
-    private final int CAMERA_PERMISSION_REQUEST = 1;
-    private final int DETECT_CODE_MESSAGE = 1;
+    private Handler main_handler;
 
     private CameraPreview cameraPreview;
     private Surface surface;
@@ -62,35 +67,76 @@ public class LoaderActivity extends Activity {
 
         @Override
         public boolean handleMessage(Message msg) {
-            detectBarcode((Bitmap) msg.obj);
-            return false;
+            // Empty the queue of messages.
+            detector_handler.removeMessages(msg.what);
+
+            // Try to detect the barcode on the received message.
+            String barcode = detectBarcode((Bitmap) msg.obj);
+
+            // Send reply to the target.
+            if (barcode != null) {
+                Message reply = Message.obtain();
+                reply.what = SET_REACTANT_MESSAGE;
+                reply.obj = barcode;
+
+                main_handler.sendMessage(reply);
+            }
+
+            return true;
         }
 
-        private void detectBarcode(Bitmap imageBitmap) {
-            Log.d(TAG, "Processing the bitmap.");
+        private String detectBarcode(Bitmap imageBitmap) {
+            // Log.d(TAG, "Processing the bitmap.");
 
             if (imageBitmap == null) {
                 Log.d(TAG, "No bitmap to process.");
-                return;
+                return null;
             }
 
             Frame frame = new Frame.Builder().setBitmap(imageBitmap).build();
             SparseArray<Barcode> barcodes = detector.detect(frame);
 
             if (barcodes.size() == 0) {
-                Log.d(TAG, "No barcode found.");
-                return;
+                return null;
             }
 
             Barcode barcode = barcodes.valueAt(0);
-            setReactant(barcode.displayValue);
+            return barcode.displayValue;
         }
     };
+
+    private final Handler.Callback main_callback = new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            String reactant = (String) msg.obj;
+            setReactant(reactant);
+            return true;
+        }
+    };
+
+    protected void setReactant(String reactant) {
+        String message = "Nelze nastavit reaktant.";
+
+        if (first_reactant == null) {
+            first_reactant = reactant;
+            message = String.format("Nastaven reaktant #1: %s", reactant);
+        }
+        else if (second_reactant == null) {
+            second_reactant = reactant;
+            message = String.format("Nastaven reaktant #2: %s", reactant);
+        }
+
+        Log.d(TAG, message);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
+
+        // Start the main handler.
+        main_handler = new Handler(main_callback);
 
         // Start the background thread.
         detector_thread = new HandlerThread("BarcodeDetection");
@@ -116,7 +162,6 @@ public class LoaderActivity extends Activity {
             // Surface is ready.
             Log.d(TAG, "The surface is ready.");
             surface = new Surface(surfaceTexture);
-            surfaceTexture.setOnFrameAvailableListener();
 
             // Wait for camera.
             openCamera();
@@ -134,6 +179,14 @@ public class LoaderActivity extends Activity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+            if (detector_handler == null) {
+                return;
+            }
+
+            Message msg = Message.obtain();
+            msg.what = DETECT_CODE_MESSAGE;
+            msg.obj = cameraPreview.getBitmap();
+            detector_handler.sendMessage(msg);
         }
     };
 
@@ -179,7 +232,7 @@ public class LoaderActivity extends Activity {
 
             // Wait for the preview request.
             try {
-                session.setRepeatingRequest(request, sessionCaptureCallback, new Handler());
+                session.setRepeatingRequest(request, null, new Handler());
             } catch (CameraAccessException e) {
                 Log.e(TAG, "The request failed to be set.", e);
             }
@@ -190,33 +243,6 @@ public class LoaderActivity extends Activity {
             Log.e(TAG, "Session configuration has failed.");
         }
     };
-
-    private final CameraCaptureSession.CaptureCallback sessionCaptureCallback = new CameraCaptureSession.CaptureCallback() {
-        @Override
-        public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-            super.onCaptureCompleted(session, request, result);
-
-            detector_handler.removeMessages(DETECT_CODE_MESSAGE);
-            Message msg = detector_handler.obtainMessage(DETECT_CODE_MESSAGE, cameraPreview.getBitmap());
-            detector_handler.sendMessage(msg);
-        }
-    };
-
-    protected void setReactant(String reactant) {
-        String message = "Nelze nastavit reaktant.";
-
-        if (first_reactant == null) {
-            first_reactant = reactant;
-            message = String.format("Nastaven reaktant #1: %s", reactant);
-        }
-        else if (second_reactant == null) {
-            second_reactant = reactant;
-            message = String.format("Nastaven reaktant #2: %s", reactant);
-        }
-
-        Log.d(TAG, message);
-        //Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
 
     private String getCamera(CameraManager cameraManager) {
 
