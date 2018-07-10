@@ -33,7 +33,6 @@ public class ExperimentActivity extends Activity {
     private String product;
 
     private ResultData result_data;
-    private BarcodeDetector detector;
     private boolean testing = false;
 
     @Override
@@ -48,10 +47,6 @@ public class ExperimentActivity extends Activity {
             Random random = new Random();
             experiment_id = random.nextInt(90000) + 10000;
         }
-
-        detector = new BarcodeDetector.Builder(getApplicationContext())
-                .setBarcodeFormats(Barcode.QR_CODE)
-                .build();
 
         result_data = new ResultData();
 
@@ -97,47 +92,10 @@ public class ExperimentActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            if (extras == null) {
-                return;
-            }
-
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            if (imageBitmap == null) {
-                return;
-            }
-
-            Frame frame = new Frame.Builder().setBitmap(imageBitmap).build();
-            SparseArray<Barcode> barcodes = detector.detect(frame);
-
-            if (barcodes.size() == 0) {
-                Toast.makeText(this, "Reaktant nebyl detekován.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Barcode barcode = barcodes.valueAt(0);
-            setReactant(barcode.displayValue);
-        }
 
         if (first_reactant != null && second_reactant != null) {
             switchFragments(new ReadyFragment());
         }
-    }
-
-    protected void setReactant(String reactant) {
-        String message = "Nelze nastavit reaktant.";
-
-        if (first_reactant == null) {
-            first_reactant = reactant;
-            message = String.format("Nastaven reaktant #1: %s", reactant);
-        }
-        else if (second_reactant == null) {
-            second_reactant = reactant;
-            message = String.format("Nastaven reaktant #2: %s", reactant);
-        }
-
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void onRunExperiment(View view) {

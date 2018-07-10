@@ -3,7 +3,10 @@ package cz.jmpionyr.pstp.fusionreactor.loader;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -11,13 +14,23 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.util.Size;
+import android.util.SparseArray;
 import android.view.Surface;
 import android.view.TextureView;
+import android.widget.Toast;
+
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.util.Collections;
 
@@ -29,21 +42,72 @@ import cz.jmpionyr.pstp.fusionreactor.R;
  */
 public class LoaderActivity extends Activity {
 
+    private String first_reactant;
+    private String second_reactant;
+
     private final String TAG = "LoaderActivity";
     private final int CAMERA_PERMISSION_REQUEST = 1;
+    private final int DETECT_CODE_MESSAGE = 1;
 
+    private CameraPreview cameraPreview;
     private Surface surface;
     private CameraDevice cameraDevice;
     private CameraCaptureSession cameraSession;
+
+    private BarcodeDetector detector;
+    private HandlerThread detector_thread;
+    private Handler detector_handler;
+
+    private final Handler.Callback detector_callback = new Handler.Callback() {
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            detectBarcode((Bitmap) msg.obj);
+            return false;
+        }
+
+        private void detectBarcode(Bitmap imageBitmap) {
+            Log.d(TAG, "Processing the bitmap.");
+
+            if (imageBitmap == null) {
+                Log.d(TAG, "No bitmap to process.");
+                return;
+            }
+
+            Frame frame = new Frame.Builder().setBitmap(imageBitmap).build();
+            SparseArray<Barcode> barcodes = detector.detect(frame);
+
+            if (barcodes.size() == 0) {
+                Log.d(TAG, "No barcode found.");
+                return;
+            }
+
+            Barcode barcode = barcodes.valueAt(0);
+            setReactant(barcode.displayValue);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
 
+        // Start the background thread.
+        detector_thread = new HandlerThread("BarcodeDetection");
+        detector_thread.start();
+
+        // Start the background handler.
+        detector_handler = new Handler(detector_thread.getLooper(), detector_callback);
+
         // Wait for surface.
-        TextureView view = findViewById(R.id.texture_view);
-        view.setSurfaceTextureListener(surfaceListener);
+        cameraPreview = findViewById(R.id.camera_preview);
+        cameraPreview.setSurfaceTextureListener(surfaceListener);
+
+        // Create the detector.
+        detector = new BarcodeDetector.Builder(getApplicationContext())
+                .setBarcodeFormats(Barcode.QR_CODE)
+                .build();
+
     }
 
     private final TextureView.SurfaceTextureListener surfaceListener = new TextureView.SurfaceTextureListener() {
@@ -52,6 +116,7 @@ public class LoaderActivity extends Activity {
             // Surface is ready.
             Log.d(TAG, "The surface is ready.");
             surface = new Surface(surfaceTexture);
+            surfaceTexture.setOnFrameAvailableListener();
 
             // Wait for camera.
             openCamera();
@@ -69,7 +134,6 @@ public class LoaderActivity extends Activity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
         }
     };
 
@@ -132,10 +196,27 @@ public class LoaderActivity extends Activity {
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
 
-            // Preview request is ready.
-            // Log.d(TAG, "The request is completed.");
+            detector_handler.removeMessages(DETECT_CODE_MESSAGE);
+            Message msg = detector_handler.obtainMessage(DETECT_CODE_MESSAGE, cameraPreview.getBitmap());
+            detector_handler.sendMessage(msg);
         }
     };
+
+    protected void setReactant(String reactant) {
+        String message = "Nelze nastavit reaktant.";
+
+        if (first_reactant == null) {
+            first_reactant = reactant;
+            message = String.format("Nastaven reaktant #1: %s", reactant);
+        }
+        else if (second_reactant == null) {
+            second_reactant = reactant;
+            message = String.format("Nastaven reaktant #2: %s", reactant);
+        }
+
+        Log.d(TAG, message);
+        //Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
     private String getCamera(CameraManager cameraManager) {
 
@@ -180,6 +261,17 @@ public class LoaderActivity extends Activity {
             Log.e(TAG, "No camera found.");
             return;
         }
+
+        try {
+            CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraID);
+            int orientation = getResources().getConfiguration().orientation;
+            cameraPreview.applyCameraCharacteristics(characteristics, orientation);
+            surface = new Surface(cameraPreview.getSurfaceTexture());
+
+        } catch (CameraAccessException e) {
+            Log.e(TAG, "Camera characteristics failed.", e);
+        }
+
 
         // Open the camera.
         try {
@@ -230,7 +322,13 @@ public class LoaderActivity extends Activity {
 
     @Override
     protected void onPause() {
+
         if (cameraSession != null) {
+            try {
+                cameraSession.abortCaptures();
+            } catch (CameraAccessException e) {
+                Log.e(TAG, "Failed to abort captures.", e);
+            }
             cameraSession.close();
             cameraSession = null;
         }
@@ -238,6 +336,22 @@ public class LoaderActivity extends Activity {
         if (cameraDevice != null) {
             cameraDevice.close();
             cameraDevice = null;
+        }
+
+        if (detector_thread != null) {
+            detector_thread.quitSafely();
+            try {
+                detector_thread.join();
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Failed to join the detector thread.", e);
+            }
+            detector_thread = null;
+            detector_handler = null;
+        }
+
+        if (detector != null) {
+            detector.release();
+            detector = null;
         }
 
         super.onPause();
