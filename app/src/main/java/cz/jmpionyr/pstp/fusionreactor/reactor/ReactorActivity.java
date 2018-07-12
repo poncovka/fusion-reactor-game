@@ -75,4 +75,9 @@ public class ReactorActivity extends Activity {
         Log.d(TAG, "Starting unsuccessful experiment");
         runExperiment("OHEN", "ENERGIE");
     }
+
+    public void quitReactor(View view) {
+        setResult(RESULT_OK);
+        finish();
+    }
 }
