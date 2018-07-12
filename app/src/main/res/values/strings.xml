@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Fusion Reactor</string>
+    <string name="app_name">Fúzní reaktor</string>
+    <string name="title_activity_loader">Příprava reaktantů</string>
+    <string name="title_activity_experiment">Experiment</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="title_activity_loader">LoaderActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
