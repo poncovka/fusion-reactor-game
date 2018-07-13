@@ -2,9 +2,9 @@ package cz.jmpionyr.pstp.fusionreactor.experiment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 
@@ -24,23 +24,14 @@ public class ExperimentActivity extends Activity {
     private String second_reactant;
     private String product;
 
-    private static final int EXPERIMENT_STATE_CHANGED = 1;
-
     private Handler handler;
+    private MediaPlayer backgroundPlayer;
+    private MediaPlayer progressPlayer;
+    private MediaPlayer resultPlayer;
 
-    private final Handler.Callback handler_callback = new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-
-            switch (msg.what) {
-                case EXPERIMENT_STATE_CHANGED:
-
-                    break;
-            }
-
-            return true;
-        }
-    };
+    private boolean isExperimentSuccessful() {
+        return product != null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +51,7 @@ public class ExperimentActivity extends Activity {
         }
 
         // Set up the handler.
-        handler = new Handler(handler_callback);
+        handler = new Handler();
 
         // Set up the view.
         setContentView(R.layout.activity_experiment);
@@ -112,34 +103,57 @@ public class ExperimentActivity extends Activity {
 
     private void planExperiment() {
 
-        // Plan the experiment process.
+        // Prepare the sounds.
+        backgroundPlayer = MediaPlayer.create(this, R.raw.reactor_background);
+        progressPlayer = MediaPlayer.create(this, ExperimentSound.getRandomProgressMessage());
+        resultPlayer = MediaPlayer.create(this, getResultMessage());
 
-        // TODO: Start the background music.
 
+        // Start the background music.
+        backgroundPlayer.start();
+
+        // TODO: Start the result generation.
+
+        // Plan the indicators.
         long delay = 1000; // wait a little after start
         int indicators_count = 3; // Choose 3 or 4 indicators.
 
         for (int indicator : IndicatorView.getRandomIndicators(indicators_count)) {
             planErrorIndication(indicator, delay);
-            delay += 3000; // wait for the indicator to stop
+            delay += 4000; // wait for the indicator to stop
         }
-        
+
+        // Plan the progress message.
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                progressPlayer.start();
+            }
+        }, delay/3);
+
+        // Plan the experiment finish.
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                backgroundPlayer.stop();
+                resultPlayer.start();
+
+                // TODO: set the result
+
                 onExperimentFinished();
             }
         }, delay);
+    }
 
 
-        // Plan one progress report.
-
-        // Stop the background music.
-
-        // Set the result.
-
-        // Tell the result.
-
+    private int getResultMessage() {
+        if (isExperimentSuccessful()) {
+            return ExperimentSound.getRandomSuccessfulMessage();
+        }
+        else {
+            return ExperimentSound.getRandomErrorMessage();
+        }
     }
 
     private void planErrorIndication(final int indicator, long delay) {
@@ -168,5 +182,31 @@ public class ExperimentActivity extends Activity {
         outState.putString(SECOND_REACTANT, second_reactant);
         outState.putString(PRODUCT, product);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onPause() {
+
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }
+
+        if (backgroundPlayer != null) {
+            backgroundPlayer.release();
+            backgroundPlayer = null;
+        }
+
+        if (progressPlayer != null) {
+            progressPlayer.release();
+            progressPlayer = null;
+        }
+
+        if (resultPlayer != null) {
+            resultPlayer.release();
+            resultPlayer = null;
+        }
+
+        super.onPause();
     }
 }
