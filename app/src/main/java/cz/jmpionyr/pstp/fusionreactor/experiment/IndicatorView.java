@@ -42,7 +42,6 @@ public class IndicatorView extends ImageView {
         animation.setRepeatCount(2);
         animation.setDuration(800);
         animation.setInterpolator(new LinearInterpolator());
-
         this.startAnimation(animation);
     }
 

@@ -1,7 +1,6 @@
 package cz.jmpionyr.pstp.fusionreactor.experiment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -87,10 +86,7 @@ public class ExperimentActivity extends Activity {
         Button button = findViewById(R.id.startButton);
         button.setText("Spuštěno");
         button.setClickable(false);
-
-        // Plan the experiment process.
-        IndicatorView indicator = findViewById(R.id.indicator4);
-        indicator.indicateError();
+        planExperiment();
     }
 
     private void onExperimentFinished() {
@@ -112,6 +108,60 @@ public class ExperimentActivity extends Activity {
 
         // Quit the activity.
         finish();
+    }
+
+    private void planExperiment() {
+
+        // Plan the experiment process.
+
+        // TODO: Start the background music.
+
+        // Choose 3 or 4 indicators.
+        // Plan their indications.
+        long delay = 1000; // wait a little after start
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                IndicatorView indicator = findViewById(R.id.indicator4);
+                indicator.indicateError();
+            }
+        }, delay);
+
+        delay += 3000; // wait for the first indicator to stop
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                IndicatorView indicator = findViewById(R.id.indicator1);
+                indicator.indicateError();
+            }
+        }, delay);
+
+        delay += 3000; // wait for the second indicator to stop
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                IndicatorView indicator = findViewById(R.id.indicator8);
+                indicator.indicateError();
+            }
+        }, delay);
+
+        delay += 3000; // wait for the third indicator to stop
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onExperimentFinished();
+            }
+        }, delay);
+
+
+        // Plan one progress report.
+
+        // Stop the background music.
+
+        // Set the result.
+
+        // Tell the result.
+
     }
 
     protected void loadInstanceState(Bundle savedInstanceState) {
