@@ -1,14 +1,11 @@
 package cz.jmpionyr.pstp.fusionreactor.experiment;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
-import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
@@ -35,12 +32,18 @@ public class IndicatorView extends ImageView {
 
     private void init(AttributeSet attrs, int defStyle) {
         setImageResource(R.mipmap.ic_launcher_round);
+        setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
     }
 
+    public void indicateError() {
+        setColorFilter(null);
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setRepeatCount(2);
+        animation.setDuration(800);
+        animation.setInterpolator(new LinearInterpolator());
+
+        this.startAnimation(animation);
     }
 
 }
