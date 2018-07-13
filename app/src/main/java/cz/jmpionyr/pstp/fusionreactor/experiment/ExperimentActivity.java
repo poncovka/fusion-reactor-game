@@ -48,6 +48,7 @@ public class ExperimentActivity extends Activity {
             Intent intent = getIntent();
             first_reactant = intent.getStringExtra(FIRST_REACTANT);
             second_reactant = intent.getStringExtra(SECOND_REACTANT);
+            product = intent.getStringExtra(PRODUCT);
         }
 
         // Set up the handler.
@@ -116,7 +117,7 @@ public class ExperimentActivity extends Activity {
 
         // Plan the indicators.
         long delay = 1000; // wait a little after start
-        int indicators_count = 3; // Choose 3 or 4 indicators.
+        int indicators_count = getIndicatorsCount();
 
         for (int indicator : IndicatorView.getRandomIndicators(indicators_count)) {
             planErrorIndication(indicator, delay);
@@ -153,6 +154,15 @@ public class ExperimentActivity extends Activity {
         }
         else {
             return ExperimentSound.getRandomErrorMessage();
+        }
+    }
+
+    private int getIndicatorsCount() {
+        if (isExperimentSuccessful()) {
+            return 3;
+        }
+        else {
+            return 4;
         }
     }
 

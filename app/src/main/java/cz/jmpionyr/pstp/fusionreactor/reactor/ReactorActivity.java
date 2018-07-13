@@ -25,10 +25,11 @@ public class ReactorActivity extends Activity {
         startActivityForResult(intent, LoaderActivity.LOAD_QR_CODES_REQUEST);
     }
 
-    private void runExperiment(String first, String second) {
+    private void runExperiment(String first, String second, String product) {
         Intent intent = new Intent(this, ExperimentActivity.class);
         intent.putExtra(ExperimentActivity.FIRST_REACTANT, first);
         intent.putExtra(ExperimentActivity.SECOND_REACTANT, second);
+        intent.putExtra(ExperimentActivity.PRODUCT, product);
         startActivity(intent);
     }
 
@@ -40,19 +41,19 @@ public class ReactorActivity extends Activity {
             if (resultCode == RESULT_OK) {
                 String first = data.getStringExtra(ExperimentActivity.FIRST_REACTANT);
                 String second = data.getStringExtra(ExperimentActivity.SECOND_REACTANT);
-                runExperiment(first, second);
+                runExperiment(first, second, "");
             }
         }
     }
 
     public void testSuccessfulExperiment(View view) {
         Log.d(TAG, "Starting suceessful experiment.");
-        runExperiment("OHEN", "VZDUCH");
+        runExperiment("OHEN", "VZDUCH", "PARA");
     }
 
     public void testUnsuccessfulExperiment(View view) {
         Log.d(TAG, "Starting unsuccessful experiment");
-        runExperiment("OHEN", "ENERGIE");
+        runExperiment("OHEN", "ENERGIE", null);
     }
 
     public void quitReactor(View view) {
