@@ -1,16 +1,19 @@
 package cz.jmpionyr.pstp.fusionreactor.experiment;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.Random;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
 
 public class ExperimentActivity extends Activity {
-
 
     public static final String EXPERIMENT_ID = "experimentId";
     public static final String FIRST_REACTANT = "firstReactant";
@@ -22,6 +25,23 @@ public class ExperimentActivity extends Activity {
     private String second_reactant;
     private String product;
 
+    private static final int EXPERIMENT_STATE_CHANGED = 1;
+
+    private Handler handler;
+
+    private final Handler.Callback handler_callback = new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case EXPERIMENT_STATE_CHANGED:
+
+                    break;
+            }
+
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,37 +60,58 @@ public class ExperimentActivity extends Activity {
             second_reactant = intent.getStringExtra(SECOND_REACTANT);
         }
 
+        // Set up the handler.
+        handler = new Handler(handler_callback);
+
         // Set up the view.
         setContentView(R.layout.activity_experiment);
 
-        // Check that the activity is using the layout version with
-        // the fragment_container FrameLayout
-        if (findViewById(R.id.fragment_container) != null) {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
-            }
-
-            // Create a new Fragment to be placed in the activity layout
-            switchFragments(new RunningFragment());
-        }
+        // Prepare for the experiment.
+        onExperimentReady();
     }
 
-    protected void switchFragments(Fragment fragment) {
-        Bundle args = new Bundle();
-        args.putInt(EXPERIMENT_ID, experiment_id);
-        args.putString(FIRST_REACTANT, first_reactant);
-        args.putString(SECOND_REACTANT, second_reactant);
-        args.putString(PRODUCT, product);
-        fragment.setArguments(args);
 
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
+    private void onExperimentReady() {
+        Button button = findViewById(R.id.startButton);
+        button.setText("Spustit");
+        button.setClickable(true);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onExperimentStarted();
+            }
+        });
+    }
+
+    private void onExperimentStarted() {
+        Button button = findViewById(R.id.startButton);
+        button.setText("Spuštěno");
+        button.setClickable(false);
+
+        // Plan the experiment process.
+        IndicatorView indicator = findViewById(R.id.indicator4);
+        indicator.indicateError();
+    }
+
+    private void onExperimentFinished() {
+        Button button = findViewById(R.id.startButton);
+        button.setText("Ukončit");
+        button.setClickable(true);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onExperimentQuit();
+            }
+        });
+    }
+
+    private void onExperimentQuit() {
+        Button button = findViewById(R.id.startButton);
+        button.setText("Ukončeno");
+        button.setClickable(false);
+
+        // Quit the activity.
+        finish();
     }
 
     protected void loadInstanceState(Bundle savedInstanceState) {

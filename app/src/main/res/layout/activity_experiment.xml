@@ -15,5 +15,116 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/reactionView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <Button
+                    android:id="@+id/startButton"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:elevation="0dp"
+                    android:text="Spustit"
+                    app:layout_constraintBottom_toTopOf="@+id/indicator7"
+                    app:layout_constraintEnd_toStartOf="@+id/indicator5"
+                    app:layout_constraintStart_toEndOf="@+id/indicator4"
+                    app:layout_constraintTop_toBottomOf="@+id/indicator2" />
+
+                <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
+                    android:id="@+id/indicator1"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/indicator4"
+                    app:layout_constraintEnd_toStartOf="@+id/indicator2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
+                    android:id="@+id/indicator2"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/startButton"
+                    app:layout_constraintEnd_toStartOf="@+id/indicator3"
+                    app:layout_constraintStart_toEndOf="@+id/indicator1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
+                    android:id="@+id/indicator3"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/indicator5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/indicator2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
+                    android:id="@+id/indicator4"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/indicator6"
+                    app:layout_constraintEnd_toStartOf="@+id/startButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/indicator1" />
+
+                <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
+                    android:id="@+id/indicator5"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/indicator8"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/startButton"
+                    app:layout_constraintTop_toBottomOf="@+id/indicator3" />
+
+                <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
+                    android:id="@+id/indicator6"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/indicator7"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/indicator4" />
+
+                <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
+                    android:id="@+id/indicator7"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/indicator8"
+                    app:layout_constraintStart_toEndOf="@+id/indicator6"
+                    app:layout_constraintTop_toBottomOf="@+id/startButton" />
+
+                <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
+                    android:id="@+id/indicator8"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.851"
+                    app:layout_constraintStart_toEndOf="@+id/indicator7"
+                    app:layout_constraintTop_toBottomOf="@+id/indicator5" />
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/reactionView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:fontFamily="monospace"
+                android:text="VODA + OHEN = ?"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
