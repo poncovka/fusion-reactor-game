@@ -8,12 +8,37 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import cz.jmpionyr.pstp.fusionreactor.R;
 
 /**
  * TODO: document your custom view class.
  */
 public class IndicatorView extends ImageView {
+
+    public static List<Integer> getIndicators() {
+        List<Integer> list = new ArrayList<>(8);
+
+        list.add(R.id.indicator1);
+        list.add(R.id.indicator2);
+        list.add(R.id.indicator3);
+        list.add(R.id.indicator4);
+        list.add(R.id.indicator5);
+        list.add(R.id.indicator6);
+        list.add(R.id.indicator7);
+        list.add(R.id.indicator8);
+
+        return list;
+    }
+
+    public static List<Integer> getRandomIndicators(int count) {
+        List<Integer> indicators = getIndicators();
+        Collections.shuffle(indicators);
+        return indicators.subList(0, count);
+    }
 
     public IndicatorView(Context context) {
         super(context);

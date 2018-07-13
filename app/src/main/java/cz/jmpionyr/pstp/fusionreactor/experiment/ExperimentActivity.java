@@ -116,36 +116,14 @@ public class ExperimentActivity extends Activity {
 
         // TODO: Start the background music.
 
-        // Choose 3 or 4 indicators.
-        // Plan their indications.
         long delay = 1000; // wait a little after start
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                IndicatorView indicator = findViewById(R.id.indicator4);
-                indicator.indicateError();
-            }
-        }, delay);
+        int indicators_count = 3; // Choose 3 or 4 indicators.
 
-        delay += 3000; // wait for the first indicator to stop
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                IndicatorView indicator = findViewById(R.id.indicator1);
-                indicator.indicateError();
-            }
-        }, delay);
-
-        delay += 3000; // wait for the second indicator to stop
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                IndicatorView indicator = findViewById(R.id.indicator8);
-                indicator.indicateError();
-            }
-        }, delay);
-
-        delay += 3000; // wait for the third indicator to stop
+        for (int indicator : IndicatorView.getRandomIndicators(indicators_count)) {
+            planErrorIndication(indicator, delay);
+            delay += 3000; // wait for the indicator to stop
+        }
+        
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -161,6 +139,18 @@ public class ExperimentActivity extends Activity {
         // Set the result.
 
         // Tell the result.
+
+    }
+
+    private void planErrorIndication(final int indicator, long delay) {
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                IndicatorView indicatorView = findViewById(indicator);
+                indicatorView.indicateError();
+            }
+        }, delay);
 
     }
 
