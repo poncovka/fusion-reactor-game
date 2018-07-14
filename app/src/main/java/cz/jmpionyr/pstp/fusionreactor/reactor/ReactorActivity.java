@@ -3,7 +3,6 @@ package cz.jmpionyr.pstp.fusionreactor.reactor;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
@@ -25,11 +24,10 @@ public class ReactorActivity extends Activity {
         startActivityForResult(intent, LoaderActivity.LOAD_QR_CODES_REQUEST);
     }
 
-    private void runExperiment(String first, String second, String product) {
+    private void runExperiment(String first, String second) {
         Intent intent = new Intent(this, ExperimentActivity.class);
         intent.putExtra(ExperimentActivity.FIRST_REACTANT, first);
         intent.putExtra(ExperimentActivity.SECOND_REACTANT, second);
-        intent.putExtra(ExperimentActivity.PRODUCT, product);
         startActivity(intent);
     }
 
@@ -41,19 +39,17 @@ public class ReactorActivity extends Activity {
             if (resultCode == RESULT_OK) {
                 String first = data.getStringExtra(ExperimentActivity.FIRST_REACTANT);
                 String second = data.getStringExtra(ExperimentActivity.SECOND_REACTANT);
-                runExperiment(first, second, "");
+                runExperiment(first, second);
             }
         }
     }
 
     public void testSuccessfulExperiment(View view) {
-        Log.d(TAG, "Starting suceessful experiment.");
-        runExperiment("OHEN", "VZDUCH", "PARA");
+        runExperiment("OHEN", "VODA");
     }
 
     public void testUnsuccessfulExperiment(View view) {
-        Log.d(TAG, "Starting unsuccessful experiment");
-        runExperiment("OHEN", "ENERGIE", null);
+        runExperiment("ZEME", "PARA");
     }
 
     public void quitReactor(View view) {

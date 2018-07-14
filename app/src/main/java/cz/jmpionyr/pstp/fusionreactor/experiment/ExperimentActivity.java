@@ -11,6 +11,7 @@ import android.widget.Button;
 import java.util.Random;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
+import cz.jmpionyr.pstp.fusionreactor.reactant.Reaction;
 
 public class ExperimentActivity extends Activity {
 
@@ -42,13 +43,17 @@ public class ExperimentActivity extends Activity {
             loadInstanceState(savedInstanceState);
         }
         else {
+            // Generate the experiment id.
             Random random = new Random();
             experiment_id = random.nextInt(90000) + 10000;
 
+            // Get the reactants.
             Intent intent = getIntent();
             first_reactant = intent.getStringExtra(FIRST_REACTANT);
             second_reactant = intent.getStringExtra(SECOND_REACTANT);
-            product = intent.getStringExtra(PRODUCT);
+
+            // Get the product.
+            product = Reaction.getProduct(first_reactant, second_reactant);
         }
 
         // Set up the handler.
