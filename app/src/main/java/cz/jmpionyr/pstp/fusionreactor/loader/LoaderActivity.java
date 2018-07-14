@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -45,6 +46,8 @@ public class LoaderActivity extends Activity {
     private BarcodeDetector detector;
     private HandlerThread detector_thread;
     private Handler detector_handler;
+
+    private MediaPlayer alertPlayer;
 
     private final Handler.Callback detector_callback = new Handler.Callback() {
 
@@ -100,6 +103,9 @@ public class LoaderActivity extends Activity {
             // Update the view.
             updateView();
 
+            // Play sound.
+            playAlert();
+
             // Ignore messages for a while.
             ignore_messages = true;
 
@@ -135,6 +141,9 @@ public class LoaderActivity extends Activity {
         // Wait for surface.
         cameraPreview = findViewById(R.id.camera_preview);
         cameraPreview.setBitmapHandler(detector_handler);
+
+        // Crete the media player.
+        alertPlayer = MediaPlayer.create(this, R.raw.loader_alert);
 
         // Create the detector.
         detector = new BarcodeDetector.Builder(getApplicationContext())
@@ -215,6 +224,10 @@ public class LoaderActivity extends Activity {
         Log.d(TAG, message);
     }
 
+    protected void playAlert() {
+        alertPlayer.start();
+    }
+
     protected void updateView() {
         TextView firstView = findViewById(R.id.firstReactantView);
         TextView secondView = findViewById(R.id.secondReactantView);
@@ -275,6 +288,11 @@ public class LoaderActivity extends Activity {
         if (detector != null) {
             detector.release();
             detector = null;
+        }
+
+        if (alertPlayer != null) {
+            alertPlayer.release();
+            alertPlayer = null;
         }
 
         super.onPause();
