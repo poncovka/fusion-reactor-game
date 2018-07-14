@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -68,6 +69,9 @@ public class ExperimentActivity extends Activity {
 
 
     private void onExperimentReady() {
+        TextView reaction = findViewById(R.id.reactionView);
+        reaction.setText(String.format("%s + %s = ?", first_reactant, second_reactant));
+
         Button button = findViewById(R.id.startButton);
         button.setText("Spustit");
         button.setClickable(true);
@@ -87,6 +91,9 @@ public class ExperimentActivity extends Activity {
     }
 
     private void onExperimentFinished() {
+        TextView reaction = findViewById(R.id.reactionView);
+        reaction.setText(String.format("%s + %s = %s", first_reactant, second_reactant, getProduct()));
+
         Button button = findViewById(R.id.startButton);
         button.setText("Ukončit");
         button.setClickable(true);
@@ -168,6 +175,15 @@ public class ExperimentActivity extends Activity {
         }
         else {
             return 4;
+        }
+    }
+
+    private String getProduct() {
+        if (isExperimentSuccessful()) {
+            return product;
+        }
+        else {
+            return "CHYBA";
         }
     }
 
