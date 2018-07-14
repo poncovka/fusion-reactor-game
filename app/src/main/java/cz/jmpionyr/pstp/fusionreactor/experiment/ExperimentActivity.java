@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.Random;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
@@ -81,6 +82,14 @@ public class ExperimentActivity extends Activity {
                 onExperimentStarted();
             }
         });
+
+        List<Integer> indicators = IndicatorView.getIndicators();
+        List<Integer> images = IndicatorView.getRandomImages();
+
+        for (int i = 0; i < indicators.size(); i++) {
+            IndicatorView indicator = findViewById(indicators.get(i));
+            indicator.setImageResource(images.get(i));
+        }
     }
 
     private void onExperimentStarted() {

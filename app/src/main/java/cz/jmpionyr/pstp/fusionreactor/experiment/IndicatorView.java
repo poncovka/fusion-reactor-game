@@ -34,10 +34,37 @@ public class IndicatorView extends ImageView {
         return list;
     }
 
+
     public static List<Integer> getRandomIndicators(int count) {
         List<Integer> indicators = getIndicators();
         Collections.shuffle(indicators);
         return indicators.subList(0, count);
+    }
+
+    public static List<Integer> getImages() {
+        List<Integer> list = new ArrayList<>(13);
+
+        list.add(R.drawable.aliens);
+        list.add(R.drawable.bomb);
+        list.add(R.drawable.bug);
+        list.add(R.drawable.cold);
+        list.add(R.drawable.connection);
+        list.add(R.drawable.electricity);
+        list.add(R.drawable.fire);
+        list.add(R.drawable.health);
+        list.add(R.drawable.hot);
+        list.add(R.drawable.measures);
+        list.add(R.drawable.power);
+        list.add(R.drawable.radiation);
+        list.add(R.drawable.time);
+
+        return list;
+    }
+
+    public static List<Integer> getRandomImages() {
+        List<Integer> images = getImages();
+        Collections.shuffle(images);
+        return images;
     }
 
     public IndicatorView(Context context) {
@@ -56,7 +83,6 @@ public class IndicatorView extends ImageView {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        setImageResource(R.mipmap.ic_launcher_round);
         setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
     }
 
