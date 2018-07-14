@@ -39,6 +39,7 @@ public class LoaderActivity extends Activity {
     private String second_reactant;
 
     private Handler main_handler;
+    private boolean ignore_messages;
 
     private CameraPreview cameraPreview;
     private BarcodeDetector detector;
@@ -69,8 +70,28 @@ public class LoaderActivity extends Activity {
     };
 
     private final Handler.Callback main_callback = new Handler.Callback() {
+
+        private Runnable go = new Runnable() {
+            @Override
+            public void run() {
+                ignore_messages = false;
+            }
+        };
+
+        private Runnable stop = new Runnable() {
+            @Override
+            public void run() {
+                quitLoader();
+            }
+        };
+
         @Override
         public boolean handleMessage(Message msg) {
+
+            if (ignore_messages) {
+                return true;
+            }
+
             String reactant = (String) msg.obj;
 
             // Set the current reactant.
@@ -79,10 +100,12 @@ public class LoaderActivity extends Activity {
             // Update the view.
             updateView();
 
-            // Try to quit.
-            if (isResultComplete()) {
-                quitLoader();
-            }
+            // Ignore messages for a while.
+            ignore_messages = true;
+
+            // Add a callback.
+            Runnable runnable = isResultComplete() ? stop : go;
+            main_handler.postDelayed(runnable, 2000);
 
             // Return true, because the message was processed.
             return true;
@@ -96,6 +119,7 @@ public class LoaderActivity extends Activity {
 
         // Start the main handler.
         main_handler = new Handler(main_callback);
+        ignore_messages = false;
 
         // Start the background thread.
         detector_thread = new HandlerThread("BarcodeDetection");
