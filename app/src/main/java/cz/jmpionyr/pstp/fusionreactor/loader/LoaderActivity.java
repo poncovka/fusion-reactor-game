@@ -13,7 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.SparseArray;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -71,10 +72,17 @@ public class LoaderActivity extends Activity {
         @Override
         public boolean handleMessage(Message msg) {
             String reactant = (String) msg.obj;
+
+            // Set the current reactant.
             setReactant(reactant);
 
-            // TODO: Don't do this here.
-            tryToFinish();
+            // Update the view.
+            updateView();
+
+            // Try to quit.
+            if (isResultComplete()) {
+                quitLoader();
+            }
 
             // Return true, because the message was processed.
             return true;
@@ -106,6 +114,7 @@ public class LoaderActivity extends Activity {
                 .build();
 
         checkCameraPermissions();
+        updateView();
     }
 
     private void startCameraPreview() {
@@ -176,18 +185,41 @@ public class LoaderActivity extends Activity {
         }
 
         Log.d(TAG, message);
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    protected void tryToFinish() {
-        if (first_reactant != null && second_reactant != null) {
-            Intent result = new Intent();
-            result.putExtra(ExperimentActivity.FIRST_REACTANT, first_reactant);
-            result.putExtra(ExperimentActivity.SECOND_REACTANT, second_reactant);
+    protected void updateView() {
+        TextView firstView = findViewById(R.id.firstReactantView);
+        TextView secondView = findViewById(R.id.secondReactantView);
 
-            setResult(RESULT_OK, result);
-            finish();
+        if (first_reactant == null) {
+            firstView.setText("Načtěte reaktant #1.");
+            secondView.setVisibility(View.GONE);
         }
+        else {
+            firstView.setText(String.format("Reaktant #1: %s", first_reactant));
+            secondView.setVisibility(View.VISIBLE);
+        }
+
+        if (second_reactant == null) {
+            secondView.setText("Načtěte reaktant #2.");
+        }
+        else {
+            secondView.setText(String.format("Reaktant #2: %s", second_reactant));
+        }
+
+    }
+
+    protected boolean isResultComplete() {
+        return first_reactant != null && second_reactant != null;
+    }
+
+    protected void quitLoader() {
+        Intent result = new Intent();
+        result.putExtra(ExperimentActivity.FIRST_REACTANT, first_reactant);
+        result.putExtra(ExperimentActivity.SECOND_REACTANT, second_reactant);
+
+        setResult(RESULT_OK, result);
+        finish();
     }
 
     @Override
