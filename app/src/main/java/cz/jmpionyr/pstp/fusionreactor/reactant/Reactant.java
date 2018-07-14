@@ -10,7 +10,7 @@ public class Reactant {
 
     // Elements
     public static final Reactant VODA = new Reactant("VODA");
-    public static final Reactant VZDUCH = new Reactant("VZDCUH");
+    public static final Reactant VZDUCH = new Reactant("VZDUCH");
     public static final Reactant OHEN = new Reactant("OHEN");
     public static final Reactant ZEME = new Reactant("ZEME");
 

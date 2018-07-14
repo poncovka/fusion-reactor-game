@@ -1,5 +1,7 @@
 package cz.jmpionyr.pstp.fusionreactor.reactant;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,6 +19,7 @@ public class Reaction {
         Map<Set<String>, String> map = new HashMap<>();
 
         for (Reactant product : Reactant.getAll()) {
+
             if (!product.isElement()) {
                 Reactant first = product.getFirstReactant();
                 Reactant second = product.getSecondReactant();

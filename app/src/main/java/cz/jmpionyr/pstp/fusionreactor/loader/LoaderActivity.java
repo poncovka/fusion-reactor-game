@@ -104,8 +104,12 @@ public class LoaderActivity extends Activity {
             ignore_messages = true;
 
             // Add a callback.
-            Runnable runnable = isResultComplete() ? stop : go;
-            main_handler.postDelayed(runnable, 2000);
+            if (isResultComplete()) {
+                main_handler.postDelayed(stop, 1000);
+            }
+            else {
+                main_handler.postDelayed(go, 2000);
+            }
 
             // Return true, because the message was processed.
             return true;
