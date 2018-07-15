@@ -127,6 +127,14 @@ public class LoaderActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
 
+        init();
+    }
+
+    private void init() {
+        if (!checkCameraPermissions()) {
+            return;
+        }
+
         // Start the main handler.
         main_handler = new Handler(main_callback);
         ignore_messages = false;
@@ -150,14 +158,7 @@ public class LoaderActivity extends Activity {
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
 
-        checkCameraPermissions();
         updateView();
-    }
-
-    private void startCameraPreview() {
-        if (checkCameraPermissions()) {
-            cameraPreview.reload();
-        }
     }
 
     private boolean checkCameraPermissions() {
@@ -181,7 +182,8 @@ public class LoaderActivity extends Activity {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // permission was granted, yay! Do the
                 // contacts-related task you need to do.
-                startCameraPreview();
+                init();
+                cameraPreview.reload();
             } else {
                 // permission denied, boo! Disable the
                 // functionality that depends on this permission.
