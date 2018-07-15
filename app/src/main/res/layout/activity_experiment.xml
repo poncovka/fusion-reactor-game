@@ -29,22 +29,23 @@
 
                 <Button
                     android:id="@+id/startButton"
-                    android:background="@drawable/button_start"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:background="@drawable/button_start"
                     android:elevation="0dp"
                     android:text="Spustit"
                     app:layout_constraintBottom_toTopOf="@+id/indicator7"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toStartOf="@+id/indicator5"
                     app:layout_constraintStart_toEndOf="@+id/indicator4"
-                    app:layout_constraintTop_toBottomOf="@+id/indicator2"
-                    app:layout_constraintDimensionRatio="1:1"/>
+                    app:layout_constraintTop_toBottomOf="@+id/indicator2" />
 
                 <cz.jmpionyr.pstp.fusionreactor.experiment.IndicatorView
                     android:id="@+id/indicator1"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toTopOf="@+id/indicator4"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toStartOf="@+id/indicator2"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -54,6 +55,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toTopOf="@+id/startButton"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toStartOf="@+id/indicator3"
                     app:layout_constraintStart_toEndOf="@+id/indicator1"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -63,6 +65,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toTopOf="@+id/indicator5"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/indicator2"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -72,6 +75,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toTopOf="@+id/indicator6"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toStartOf="@+id/startButton"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/indicator1" />
@@ -81,6 +85,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toTopOf="@+id/indicator8"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/startButton"
                     app:layout_constraintTop_toBottomOf="@+id/indicator3" />
@@ -90,6 +95,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toStartOf="@+id/indicator7"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/indicator4" />
@@ -99,6 +105,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toStartOf="@+id/indicator8"
                     app:layout_constraintStart_toEndOf="@+id/indicator6"
                     app:layout_constraintTop_toBottomOf="@+id/startButton" />
@@ -108,17 +115,19 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.851"
                     app:layout_constraintStart_toEndOf="@+id/indicator7"
                     app:layout_constraintTop_toBottomOf="@+id/indicator5" />
+
             </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:id="@+id/reactionView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="15dp"
                 android:fontFamily="monospace"
                 android:text="OHEN + VODA = ?"
                 android:textSize="18sp"
