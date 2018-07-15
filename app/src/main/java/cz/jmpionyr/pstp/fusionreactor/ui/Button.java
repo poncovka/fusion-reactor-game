@@ -32,6 +32,6 @@ public class Button extends android.widget.Button {
         Typeface tf = ResourcesCompat.getFont(getContext(), R.font.main_font);
         setTypeface(tf);
         setTextColor(Color.WHITE);
-        setTextSize(18.0f);
+        setTextSize(20.0f);
     }
 }

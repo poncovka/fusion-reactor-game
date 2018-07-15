@@ -32,6 +32,7 @@ public class TextView extends android.widget.TextView {
         Typeface tf = ResourcesCompat.getFont(getContext(), R.font.main_font);
         setTypeface(tf);
         setTextColor(Color.WHITE);
+        setTextSize(20.0f);
     }
 
 

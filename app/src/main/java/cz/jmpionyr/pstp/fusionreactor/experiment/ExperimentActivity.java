@@ -6,6 +6,9 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -104,6 +107,16 @@ public class ExperimentActivity extends Activity {
     private void onExperimentFinished() {
         TextView reaction = findViewById(R.id.reactionView);
         reaction.setText(String.format("%s + %s = %s", first_reactant, second_reactant, getProduct()));
+
+        if (!isExperimentSuccessful()) {
+            reaction.setTextColor(getResources().getColor(R.color.bright_red));
+        }
+
+        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setRepeatCount(Animation.INFINITE);
+        animation.setInterpolator(new LinearInterpolator());
+        animation.setDuration(800);
+        reaction.startAnimation(animation);
 
         Button button = findViewById(R.id.startButton);
         button.setText("Ukoncit");
