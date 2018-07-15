@@ -19,7 +19,7 @@ public class ReactorActivity extends Activity {
         setContentView(R.layout.activity_reactor);
     }
 
-    public void startExperiment(View view) {
+    public void runLoader(View view) {
         Intent intent = new Intent(this, LoaderActivity.class);
         startActivityForResult(intent, LoaderActivity.LOAD_QR_CODES_REQUEST);
     }
