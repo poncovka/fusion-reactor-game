@@ -62,38 +62,27 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/button_yes" />
 
-            <cz.jmpionyr.pstp.fusionreactor.ui.TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Který experiment otestovat?"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button_yes" />
-
             <cz.jmpionyr.pstp.fusionreactor.ui.Button
                 android:id="@+id/button"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:onClick="testSuccessfulExperiment"
-                android:text="OK"
-                app:layout_constraintEnd_toStartOf="@+id/button2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                android:text="TEST: USPESNY EXPERIMENT"
+                app:layout_constraintBottom_toTopOf="@+id/button2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <cz.jmpionyr.pstp.fusionreactor.ui.Button
                 android:id="@+id/button2"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:onClick="testUnsuccessfulExperiment"
-                android:text="ERROR"
-                app:layout_constraintBaseline_toBaselineOf="@+id/button"
+                android:text="TEST: NEUSPESNY EXPERIMENT"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/button" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
 
