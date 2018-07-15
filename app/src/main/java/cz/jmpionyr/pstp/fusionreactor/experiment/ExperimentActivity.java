@@ -76,6 +76,7 @@ public class ExperimentActivity extends Activity {
         Button button = findViewById(R.id.startButton);
         button.setText("Spustit");
         button.setClickable(true);
+        button.setBackgroundResource(R.drawable.button_start);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +97,7 @@ public class ExperimentActivity extends Activity {
         Button button = findViewById(R.id.startButton);
         button.setText("Spuštěno");
         button.setClickable(false);
+        button.setBackgroundResource(R.drawable.button_start_clicked);
         planExperiment();
     }
 
@@ -106,6 +108,7 @@ public class ExperimentActivity extends Activity {
         Button button = findViewById(R.id.startButton);
         button.setText("Ukončit");
         button.setClickable(true);
+        button.setBackgroundResource(R.drawable.button_start);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,6 +121,7 @@ public class ExperimentActivity extends Activity {
         Button button = findViewById(R.id.startButton);
         button.setText("Ukončeno");
         button.setClickable(false);
+        button.setBackgroundResource(R.drawable.button_start_clicked);
 
         // Quit the activity.
         finish();
