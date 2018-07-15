@@ -233,7 +233,7 @@ public class LoaderActivity extends Activity {
         TextView secondView = findViewById(R.id.secondReactantView);
 
         if (first_reactant == null) {
-            firstView.setText("Načtěte reaktant #1.");
+            firstView.setText("Nactete reaktant #1");
             secondView.setVisibility(View.GONE);
         }
         else {
@@ -242,7 +242,7 @@ public class LoaderActivity extends Activity {
         }
 
         if (second_reactant == null) {
-            secondView.setText("Načtěte reaktant #2.");
+            secondView.setText("Nactete reaktant #2");
         }
         else {
             secondView.setText(String.format("Reaktant #2: %s", second_reactant));

@@ -30,7 +30,7 @@
             android:background="@color/black_overlay"
             android:orientation="vertical">
 
-            <TextView
+            <cz.jmpionyr.pstp.fusionreactor.ui.TextView
                 android:id="@+id/secondReactantView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 android:text="Reaktant #2: VODA"
                 android:textSize="18sp"/>
 
-            <TextView
+            <cz.jmpionyr.pstp.fusionreactor.ui.TextView
                 android:id="@+id/firstReactantView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

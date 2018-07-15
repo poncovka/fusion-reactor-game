@@ -27,7 +27,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <Button
+                <cz.jmpionyr.pstp.fusionreactor.ui.Button
                     android:id="@+id/startButton"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -123,14 +123,13 @@
 
             </android.support.constraint.ConstraintLayout>
 
-            <TextView
+            <cz.jmpionyr.pstp.fusionreactor.ui.TextView
                 android:id="@+id/reactionView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:fontFamily="monospace"
                 android:text="OHEN + VODA = ?"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

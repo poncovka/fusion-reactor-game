@@ -95,7 +95,7 @@ public class ExperimentActivity extends Activity {
 
     private void onExperimentStarted() {
         Button button = findViewById(R.id.startButton);
-        button.setText("Spuštěno");
+        button.setText("Spusteno");
         button.setClickable(false);
         button.setBackgroundResource(R.drawable.button_start_clicked);
         planExperiment();
@@ -106,7 +106,7 @@ public class ExperimentActivity extends Activity {
         reaction.setText(String.format("%s + %s = %s", first_reactant, second_reactant, getProduct()));
 
         Button button = findViewById(R.id.startButton);
-        button.setText("Ukončit");
+        button.setText("Ukoncit");
         button.setClickable(true);
         button.setBackgroundResource(R.drawable.button_start);
         button.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +119,7 @@ public class ExperimentActivity extends Activity {
 
     private void onExperimentQuit() {
         Button button = findViewById(R.id.startButton);
-        button.setText("Ukončeno");
+        button.setText("Ukonceno");
         button.setClickable(false);
         button.setBackgroundResource(R.drawable.button_start_clicked);
 
