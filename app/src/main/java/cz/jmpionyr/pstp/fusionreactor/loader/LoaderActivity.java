@@ -16,6 +16,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -132,8 +133,6 @@ public class LoaderActivity extends Activity {
         cameraPreview = findViewById(R.id.camera_preview);
         first_message = findViewById(R.id.firstReactantView);
         second_message = findViewById(R.id.secondReactantView);
-
-        updateView();
     }
 
     @Override
@@ -141,6 +140,19 @@ public class LoaderActivity extends Activity {
         super.onResume();
 
         if (!checkCameraPermissions()) {
+            first_message.setText("Kamera neni povolena");
+            second_message.setVisibility(View.GONE);
+            return;
+        }
+
+        // Create the detector.
+        detector = new BarcodeDetector.Builder(getApplicationContext())
+                .setBarcodeFormats(Barcode.QR_CODE)
+                .build();
+
+        if (!detector.isOperational()) {
+            first_message.setText("Detektor stahuje knihovny");
+            second_message.setVisibility(View.GONE);
             return;
         }
 
@@ -159,10 +171,8 @@ public class LoaderActivity extends Activity {
         // Crete the media player.
         alertPlayer = MediaPlayer.create(this, R.raw.loader_alert);
 
-        // Create the detector.
-        detector = new BarcodeDetector.Builder(getApplicationContext())
-                .setBarcodeFormats(Barcode.QR_CODE)
-                .build();
+        // Update the view.
+        updateView();
     }
 
     private boolean checkCameraPermissions() {
@@ -272,8 +282,6 @@ public class LoaderActivity extends Activity {
             cameraPreview.release();
         }
 
-        super.onPause();
-
         if (detector_thread != null) {
             detector_thread.quitSafely();
             try {
@@ -289,7 +297,6 @@ public class LoaderActivity extends Activity {
             detector_handler = null;
         }
 
-
         if (detector != null) {
             detector.release();
             detector = null;
@@ -299,5 +306,7 @@ public class LoaderActivity extends Activity {
             alertPlayer.release();
             alertPlayer = null;
         }
+
+        super.onPause();
     }
 }
