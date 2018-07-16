@@ -31,23 +31,21 @@
             android:orientation="vertical">
 
             <cz.jmpionyr.pstp.fusionreactor.ui.TextView
-                android:id="@+id/secondReactantView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="5dp"
-                android:fontFamily="monospace"
-                android:text="Reaktant #2: VODA"
-                android:textSize="18sp"/>
-
-            <cz.jmpionyr.pstp.fusionreactor.ui.TextView
                 android:id="@+id/firstReactantView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_margin="5dp"
                 android:fontFamily="monospace"
-                android:text="Reaktant #1: OHEN"
+                android:textSize="18sp"/>
+
+            <cz.jmpionyr.pstp.fusionreactor.ui.TextView
+                android:id="@+id/secondReactantView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="5dp"
+                android:fontFamily="monospace"
                 android:textSize="18sp" />
         </LinearLayout>
     </FrameLayout>
