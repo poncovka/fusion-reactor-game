@@ -7,7 +7,6 @@
     tools:context=".reactor.ReactorActivity">
 
     <FrameLayout
-        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,7 +19,6 @@
             android:layout_height="match_parent">
 
             <cz.jmpionyr.pstp.fusionreactor.ui.TextView
-                android:id="@+id/text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
@@ -63,7 +61,6 @@
                 app:layout_constraintStart_toEndOf="@+id/button_yes" />
 
             <cz.jmpionyr.pstp.fusionreactor.ui.Button
-                android:id="@+id/button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:onClick="testSuccessfulExperiment"
