@@ -36,6 +36,7 @@ public class CameraPreview extends TextureView {
     private Handler handler;
     private Surface surface;
 
+    private Handler cameraHandler;
     private CameraDevice cameraDevice;
     private CameraCaptureSession cameraSession;
 
@@ -72,6 +73,8 @@ public class CameraPreview extends TextureView {
     }
 
     public void reload() {
+        cameraHandler = new Handler();
+
         CameraManager cameraManager = getCameraManager();
         String cameraID = getCamera(cameraManager);
 
@@ -147,8 +150,6 @@ public class CameraPreview extends TextureView {
 
         setRatio(ratio);
         requestLayout();
-
-        surface = new Surface(getSurfaceTexture());
     }
 
 
@@ -161,7 +162,7 @@ public class CameraPreview extends TextureView {
 
         // Open the camera.
         try {
-            cameraManager.openCamera(cameraID, cameraStateCallback, new Handler());
+            cameraManager.openCamera(cameraID, cameraStateCallback, cameraHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "Camera couldn't be opened.", e);
         }
@@ -169,7 +170,7 @@ public class CameraPreview extends TextureView {
 
     private void createPreviewSession(Surface surface, CameraDevice cameraDevice) {
         try {
-            cameraDevice.createCaptureSession(Collections.singletonList(surface), sessionStateCallback, new Handler());
+            cameraDevice.createCaptureSession(Collections.singletonList(surface), sessionStateCallback, cameraHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "Session couldn't be created", e);
         }
@@ -218,17 +219,19 @@ public class CameraPreview extends TextureView {
         }
 
         @Override
-        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
 
         }
 
         @Override
-        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            return false;
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+            Log.d(TAG, "Destroying the surface.");
+            surface = null;
+            return true;
         }
 
         @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
             if (handler == null) {
                 return;
             }
@@ -282,7 +285,7 @@ public class CameraPreview extends TextureView {
 
             // Wait for the preview request.
             try {
-                session.setRepeatingRequest(request, null, new Handler());
+                session.setRepeatingRequest(request, null, cameraHandler);
             } catch (CameraAccessException e) {
                 Log.e(TAG, "The request failed to be set.", e);
             }
@@ -296,6 +299,8 @@ public class CameraPreview extends TextureView {
     };
 
     private void closeCamera() {
+        Log.d(TAG, "Closing the camera.");
+
         if (cameraDevice != null) {
             cameraDevice.close();
             cameraDevice = null;
@@ -303,18 +308,28 @@ public class CameraPreview extends TextureView {
     }
 
     private void closeSession() {
+        Log.d(TAG, "Closing the session.");
+
         if (cameraSession != null) {
             cameraSession.close();
             cameraSession = null;
         }
     }
 
-    public void close() {
-        closeCamera();
-        closeSession();
+    private void closeHandler() {
+        Log.d(TAG, "Closing the handler.");
 
-        ratio = null;
-        surface = null;
+        if (cameraHandler != null) {
+            cameraHandler.removeCallbacksAndMessages(null);
+            cameraHandler = null;
+        }
+
+    }
+
+    public void release() {
         handler = null;
+        closeHandler();
+        closeSession();
+        closeCamera();
     }
 }

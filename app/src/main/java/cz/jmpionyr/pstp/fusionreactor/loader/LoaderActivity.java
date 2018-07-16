@@ -47,6 +47,8 @@ public class LoaderActivity extends Activity {
     private HandlerThread detector_thread;
     private Handler detector_handler;
 
+    private TextView first_message;
+    private TextView second_message;
     private MediaPlayer alertPlayer;
 
     private final Handler.Callback detector_callback = new Handler.Callback() {
@@ -127,10 +129,17 @@ public class LoaderActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loader);
 
-        init();
+        cameraPreview = findViewById(R.id.camera_preview);
+        first_message = findViewById(R.id.firstReactantView);
+        second_message = findViewById(R.id.secondReactantView);
+
+        updateView();
     }
 
-    private void init() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         if (!checkCameraPermissions()) {
             return;
         }
@@ -145,9 +154,6 @@ public class LoaderActivity extends Activity {
 
         // Start the background handler.
         detector_handler = new Handler(detector_thread.getLooper(), detector_callback);
-
-        // Wait for surface.
-        cameraPreview = findViewById(R.id.camera_preview);
         cameraPreview.setBitmapHandler(detector_handler);
 
         // Crete the media player.
@@ -157,8 +163,6 @@ public class LoaderActivity extends Activity {
         detector = new BarcodeDetector.Builder(getApplicationContext())
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
-
-        updateView();
     }
 
     private boolean checkCameraPermissions() {
@@ -182,7 +186,6 @@ public class LoaderActivity extends Activity {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // permission was granted, yay! Do the
                 // contacts-related task you need to do.
-                init();
                 cameraPreview.reload();
             } else {
                 // permission denied, boo! Disable the
@@ -231,23 +234,20 @@ public class LoaderActivity extends Activity {
     }
 
     protected void updateView() {
-        TextView firstView = findViewById(R.id.firstReactantView);
-        TextView secondView = findViewById(R.id.secondReactantView);
-
         if (first_reactant == null) {
-            firstView.setText("Nactete reaktant #1");
-            secondView.setVisibility(View.GONE);
+            first_message.setText("Nactete reaktant #1");
+            second_message.setVisibility(View.GONE);
         }
         else {
-            firstView.setText(String.format("Reaktant #1: %s", first_reactant));
-            secondView.setVisibility(View.VISIBLE);
+            first_message.setText(String.format("Reaktant #1: %s", first_reactant));
+            second_message.setVisibility(View.VISIBLE);
         }
 
         if (second_reactant == null) {
-            secondView.setText("Nactete reaktant #2");
+            second_message.setText("Nactete reaktant #2");
         }
         else {
-            secondView.setText(String.format("Reaktant #2: %s", second_reactant));
+            second_message.setText(String.format("Reaktant #2: %s", second_reactant));
         }
 
     }
@@ -267,15 +267,12 @@ public class LoaderActivity extends Activity {
 
     @Override
     protected void onPause() {
+
         if (cameraPreview != null) {
-            cameraPreview.close();
-            cameraPreview = null;
+            cameraPreview.release();
         }
 
-        if (detector_handler != null) {
-            detector_handler.removeCallbacksAndMessages(null);
-            detector_handler = null;
-        }
+        super.onPause();
 
         if (detector_thread != null) {
             detector_thread.quitSafely();
@@ -287,6 +284,12 @@ public class LoaderActivity extends Activity {
             detector_thread = null;
         }
 
+        if (detector_handler != null) {
+            detector_handler.removeCallbacksAndMessages(null);
+            detector_handler = null;
+        }
+
+
         if (detector != null) {
             detector.release();
             detector = null;
@@ -296,7 +299,5 @@ public class LoaderActivity extends Activity {
             alertPlayer.release();
             alertPlayer = null;
         }
-
-        super.onPause();
     }
 }
