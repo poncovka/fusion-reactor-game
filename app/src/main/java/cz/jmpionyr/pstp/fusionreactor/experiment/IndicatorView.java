@@ -86,7 +86,7 @@ public class IndicatorView extends ImageView {
         setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
     }
 
-    public void indicateError() {
+    public void animateError() {
         setColorFilter(null);
 
         AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
@@ -94,6 +94,11 @@ public class IndicatorView extends ImageView {
         animation.setDuration(800);
         animation.setInterpolator(new LinearInterpolator());
         this.startAnimation(animation);
+    }
+
+    public void showError() {
+        setColorFilter(null);
+        setAlpha(1.0f);
     }
 
 }
