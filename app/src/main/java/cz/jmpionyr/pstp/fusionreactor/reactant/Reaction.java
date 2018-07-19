@@ -9,6 +9,7 @@ import java.util.Set;
 
 public class Reaction {
 
+    private static final String TAG = "Reaction";
     private static final Map<Set<String>, String> map = getReactions();
 
     public static String getProduct(String first, String second) {
@@ -32,7 +33,13 @@ public class Reaction {
     }
 
     private static void addReaction(Map<Set<String>, String> map, String first, String second, String product) {
-        map.put(getKey(first, second), product);
+        Set<String> key = getKey(first, second);
+
+        if (map.containsKey(key)) {
+            Log.e(TAG, String.format("Same reaction for %s and %s", product, map.get(key)));
+        }
+
+        map.put(key, product);
     }
 
     private static Set<String> getKey(String first, String second) {
