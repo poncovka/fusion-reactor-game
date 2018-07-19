@@ -22,7 +22,9 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * TODO: document your custom view class.
@@ -31,6 +33,9 @@ public class CameraPreview extends TextureView {
 
     private static final String TAG = "CameraPreview";
     public static final int BITMAP_AVAILABLE = 1;
+
+    private static final int MAX_PREVIEW_WIDTH = 1920;
+    private static final int MAX_PREVIEW_HEIGHT = 1080;
 
     private Size ratio;
     private Handler handler;
@@ -63,13 +68,28 @@ public class CameraPreview extends TextureView {
         this.handler = handler;
     }
 
-    public void setRatio(Size ratio) {
+    public void setRatio(int width, int height) {
 
-        if (ratio == null || ratio.getWidth() == 0 || ratio.getHeight() == 0) {
+        if (ratio == null || width == 0 || height == 0) {
             ratio = null;
         }
 
-        this.ratio = ratio;
+        this.ratio = new Size(width, height);
+    }
+
+    public Size getRatio() {
+
+        if (ratio == null) {
+            return null;
+        }
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return ratio;
+        }
+        else {
+            return new Size(ratio.getHeight(), ratio.getWidth());
+        }
     }
 
     public void reload() {
@@ -79,8 +99,9 @@ public class CameraPreview extends TextureView {
         String cameraID = getCamera(cameraManager);
 
         CameraCharacteristics characteristics = getCameraCharacteristics(cameraManager, cameraID);
-        int orientation = getResources().getConfiguration().orientation;
-        applyCameraCharacteristics(characteristics, orientation);
+        List<Size> sizes = getOutputSizes(characteristics);
+        Size best = getBestSize(sizes);
+        resizePreview(best);
 
         openCamera(cameraManager, cameraID);
     }
@@ -130,28 +151,59 @@ public class CameraPreview extends TextureView {
         return null;
     }
 
-    public void applyCameraCharacteristics(CameraCharacteristics characteristics, int orientation) {
+    private List<Size> getOutputSizes(CameraCharacteristics characteristics) {
+        List<Size> sizes = new ArrayList<>();
 
-        StreamConfigurationMap configurationMap = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-        if (configurationMap == null) {
-            return;
+        StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        if (map != null) {
+
+            for(Size size : map.getOutputSizes(SurfaceTexture.class)) {
+                if (size.getHeight() <= MAX_PREVIEW_HEIGHT && size.getWidth() <= MAX_PREVIEW_WIDTH) {
+                    sizes.add(size);
+                }
+            }
         }
 
-        // TODO: Choose optimal size.
-
-        Size[] sizes = configurationMap.getOutputSizes(SurfaceTexture.class);
-        Size ratio = sizes[0];
-
-        //SurfaceTexture texture = getSurfaceTexture();
-        //texture.setDefaultBufferSize(size.getWidth(), size.getHeight());
-        if (orientation != Configuration.ORIENTATION_LANDSCAPE) {
-            ratio = new Size(ratio.getHeight(), ratio.getWidth());
-        }
-
-        setRatio(ratio);
-        requestLayout();
+        return sizes;
     }
 
+    public Size getBestSize(List<Size> sizes) {
+
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+
+        Log.d(TAG, String.format("Choosing optimal size for: %dx%d", width, height));
+
+        // Get sizes and choose a default size.
+        Size best = sizes.get(0);
+
+        // Choose optimal size.
+        for (Size size : sizes) {
+            Log.d(TAG, String.format("Processing size %s", size.toString()));
+
+            boolean is_small = size.getHeight() <= height && size.getWidth() <= width;
+            boolean is_largest = size.getHeight() * size.getWidth() > best.getHeight() * best.getWidth();
+
+            if (is_small && is_largest) {
+                best = size;
+            }
+        }
+
+        Log.d(TAG, String.format("Using size: %s", best.toString()));
+        return best;
+    }
+
+    public void resizePreview(Size size) {
+        // Set the ratio of the view.
+        setRatio(size.getWidth(), size.getHeight());
+
+        // Set the default buffer size.
+        SurfaceTexture texture = getSurfaceTexture();
+        texture.setDefaultBufferSize(size.getWidth(), size.getHeight());
+
+        // Change the layout.
+        requestLayout();
+    }
 
     private void openCamera(CameraManager cameraManager, String cameraID) {
 
@@ -191,19 +243,31 @@ public class CameraPreview extends TextureView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
 
-        if (ratio == null) {
-            setMeasuredDimension(width, height);
+        Log.d(TAG, String.format("Measured dimensions are %dx%d.", width, height));
+
+        Size ratio = getRatio();
+        if (ratio != null) {
+
+            Log.d(TAG, String.format("Using ratio %s.", ratio.toString()));
+
+            // Keep the width, calculate the height.
+            if (width > height * ratio.getWidth() / ratio.getHeight()) {
+                Log.d(TAG, "Keeping the width.");
+                height = width * ratio.getHeight() / ratio.getWidth();
+            }
+            // Keep the height, calculate the width.
+           else {
+                Log.d(TAG, "Keeping the height.");
+                width = height * ratio.getWidth() / ratio.getHeight();
+            }
         }
-        else if (width < height * ratio.getWidth() / ratio.getHeight()) {
-            setMeasuredDimension(width, width * ratio.getHeight() / ratio.getWidth());
-        }
-        else {
-            setMeasuredDimension(height * ratio.getWidth() / ratio.getHeight(), height);
-        }
+
+        // Set the new dimensions.
+        Log.d(TAG, String.format("Setting measured dimensions to %dx%d.", width, height));
+        setMeasuredDimension(width, height);
     }
 
     private final TextureView.SurfaceTextureListener surfaceListener = new TextureView.SurfaceTextureListener() {
@@ -211,8 +275,7 @@ public class CameraPreview extends TextureView {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
             // Surface is ready.
-            Log.d(TAG, "The surface is ready.");
-            surface = new Surface(surfaceTexture);
+            Log.d(TAG, String.format("The surface is ready with dimensions %dx%d.", width, height));
 
             // Wait for camera.
             reload();
@@ -220,7 +283,7 @@ public class CameraPreview extends TextureView {
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
-
+            Log.d(TAG, String.format("Surface texture size changed %dx%d.", width, height));
         }
 
         @Override
@@ -252,6 +315,7 @@ public class CameraPreview extends TextureView {
             cameraDevice = camera;
 
             // Wait for a preview session.
+            surface = new Surface(getSurfaceTexture());
             createPreviewSession(surface, cameraDevice);
         }
 
