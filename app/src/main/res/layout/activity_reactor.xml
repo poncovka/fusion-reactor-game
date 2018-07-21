@@ -26,7 +26,6 @@
                 android:layout_marginStart="24dp"
                 android:text="Zahajit novy experiment?"
                 android:textAlignment="center"
-                android:textSize="18sp"
                 app:layout_constraintBottom_toTopOf="@+id/button_yes"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.502"
