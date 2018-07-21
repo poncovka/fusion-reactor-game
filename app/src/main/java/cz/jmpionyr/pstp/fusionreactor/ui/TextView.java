@@ -1,5 +1,6 @@
 package cz.jmpionyr.pstp.fusionreactor.ui;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -10,6 +11,19 @@ import android.util.TypedValue;
 import cz.jmpionyr.pstp.fusionreactor.R;
 
 public class TextView extends android.widget.TextView {
+
+    public static void applyToActionBar(Context context, ActionBar bar, String title) {
+        if (context == null || bar == null) {
+            return;
+        }
+
+        TextView view = new TextView(context);
+        view.setText(title);
+
+        bar.setDisplayShowCustomEnabled(true);
+        bar.setDisplayShowTitleEnabled(false);
+        bar.setCustomView(view);
+    }
 
     public TextView(Context context) {
         super(context);

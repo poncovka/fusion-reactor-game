@@ -8,6 +8,7 @@ import android.view.View;
 import cz.jmpionyr.pstp.fusionreactor.R;
 import cz.jmpionyr.pstp.fusionreactor.experiment.ExperimentActivity;
 import cz.jmpionyr.pstp.fusionreactor.loader.LoaderActivity;
+import cz.jmpionyr.pstp.fusionreactor.ui.TextView;
 
 public class ReactorActivity extends Activity {
 
@@ -16,6 +17,10 @@ public class ReactorActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String title = "Fuzni reaktor";
+        TextView.applyToActionBar(this, getActionBar(), title);
+
         setContentView(R.layout.activity_reactor);
     }
 

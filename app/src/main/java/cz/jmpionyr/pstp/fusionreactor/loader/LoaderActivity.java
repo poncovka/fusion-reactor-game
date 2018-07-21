@@ -15,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -23,6 +22,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
 import cz.jmpionyr.pstp.fusionreactor.experiment.ExperimentActivity;
+import cz.jmpionyr.pstp.fusionreactor.ui.TextView;
 
 public class LoaderActivity extends Activity {
 
@@ -123,6 +123,10 @@ public class LoaderActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String title = "Priprava reaktantu";
+        TextView.applyToActionBar(this, getActionBar(), title);
+
         setContentView(R.layout.activity_loader);
 
         cameraPreview = findViewById(R.id.camera_preview);

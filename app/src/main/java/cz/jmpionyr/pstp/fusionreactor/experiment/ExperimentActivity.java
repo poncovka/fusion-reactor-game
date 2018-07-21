@@ -10,7 +10,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.Random;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
 import cz.jmpionyr.pstp.fusionreactor.reactant.Reaction;
+import cz.jmpionyr.pstp.fusionreactor.ui.TextView;
 
 public class ExperimentActivity extends Activity {
 
@@ -61,7 +61,7 @@ public class ExperimentActivity extends Activity {
         } else {
             // Generate the experiment id.
             Random random = new Random();
-            experiment_id = random.nextInt(90000) + 10000;
+            experiment_id = random.nextInt(9000) + 1000;
 
             // Set the state of the experiment.
             experiment_state = EXPERIMENT_READY;
@@ -74,6 +74,9 @@ public class ExperimentActivity extends Activity {
             // Get the product.
             product = Reaction.getProduct(first_reactant, second_reactant);
         }
+
+        String title = String.format("Experiment #%s", Integer.toString(experiment_id));
+        TextView.applyToActionBar(this, getActionBar(), title);
 
         // Set up the view.
         setContentView(R.layout.activity_experiment);
