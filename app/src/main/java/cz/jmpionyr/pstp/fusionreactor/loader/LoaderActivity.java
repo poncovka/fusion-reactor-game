@@ -16,7 +16,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -25,10 +24,6 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import cz.jmpionyr.pstp.fusionreactor.R;
 import cz.jmpionyr.pstp.fusionreactor.experiment.ExperimentActivity;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class LoaderActivity extends Activity {
 
     public static final int LOAD_QR_CODES_REQUEST = 1;
@@ -77,14 +72,14 @@ public class LoaderActivity extends Activity {
 
     private final Handler.Callback main_callback = new Handler.Callback() {
 
-        private Runnable go = new Runnable() {
+        private final Runnable go = new Runnable() {
             @Override
             public void run() {
                 ignore_messages = false;
             }
         };
 
-        private Runnable stop = new Runnable() {
+        private final Runnable stop = new Runnable() {
             @Override
             public void run() {
                 quitLoader();
@@ -224,7 +219,7 @@ public class LoaderActivity extends Activity {
         return barcode.displayValue;
     }
 
-    protected void setReactant(String reactant) {
+    private void setReactant(String reactant) {
         String message = "Nelze nastavit reaktant.";
 
         if (first_reactant == null) {
@@ -239,11 +234,11 @@ public class LoaderActivity extends Activity {
         Log.d(TAG, message);
     }
 
-    protected void playAlert() {
+    private void playAlert() {
         alertPlayer.start();
     }
 
-    protected void updateView() {
+    private void updateView() {
         if (first_reactant == null) {
             first_message.setText("Nactete reaktant #1");
             second_message.setVisibility(View.GONE);
@@ -262,11 +257,11 @@ public class LoaderActivity extends Activity {
 
     }
 
-    protected boolean isResultComplete() {
+    private boolean isResultComplete() {
         return first_reactant != null && second_reactant != null;
     }
 
-    protected void quitLoader() {
+    private void quitLoader() {
         Intent result = new Intent();
         result.putExtra(ExperimentActivity.FIRST_REACTANT, first_reactant);
         result.putExtra(ExperimentActivity.SECOND_REACTANT, second_reactant);

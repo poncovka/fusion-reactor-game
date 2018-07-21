@@ -284,7 +284,7 @@ public class ExperimentActivity extends Activity {
         }
     }
 
-    protected void loadInstanceState(Bundle savedInstanceState) {
+    private void loadInstanceState(Bundle savedInstanceState) {
         experiment_id = savedInstanceState.getInt(EXPERIMENT_ID);
         experiment_state = savedInstanceState.getInt(EXPERIMENT_STATE);
         first_reactant = savedInstanceState.getString(FIRST_REACTANT);

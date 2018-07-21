@@ -8,9 +8,6 @@ import android.util.AttributeSet;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
 
-/**
- * TODO: document your custom view class.
- */
 public class TextView extends android.widget.TextView {
 
     public TextView(Context context) {

@@ -58,11 +58,11 @@ public class Reactant {
     private final Reactant first_reactant;
     private final Reactant second_reactant;
 
-    public Reactant(String name) {
+    private Reactant(String name) {
         this(name, null, null);
     }
 
-    public Reactant(String name, Reactant first_reactant, Reactant second_reactant) {
+    private Reactant(String name, Reactant first_reactant, Reactant second_reactant) {
         // Initialize the reactant.
         this.name = name;
         this.first_reactant = first_reactant;

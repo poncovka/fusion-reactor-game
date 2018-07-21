@@ -18,7 +18,6 @@ import android.view.TextureView;
 public class CameraPreview extends TextureView {
 
     private static final String TAG = "CameraPreview";
-    public static final int BITMAP_AVAILABLE = 1;
 
     private Size ratio;
     private Handler handler;
@@ -47,7 +46,7 @@ public class CameraPreview extends TextureView {
         this.setSurfaceTextureListener(surfaceListener);
     }
 
-    public void setRatio(int width, int height) {
+    private void setRatio(int width, int height) {
 
         if (width == 0 || height == 0) {
             ratio = null;
@@ -57,7 +56,7 @@ public class CameraPreview extends TextureView {
         ratio = new Size(width, height);
     }
 
-    public Size getRatio() {
+    private Size getRatio() {
 
         if (ratio == null) {
             return null;
@@ -93,7 +92,7 @@ public class CameraPreview extends TextureView {
         Camera.openCamera(cameraManager, cameraID, cameraHandler, cameraCallback);
     }
 
-    public void resizePreview(Size size) {
+    private void resizePreview(Size size) {
         // Set the ratio of the view.
         setRatio(size.getWidth(), size.getHeight());
 
@@ -116,11 +115,9 @@ public class CameraPreview extends TextureView {
         }
 
         Message msg = Message.obtain();
-        msg.what = BITMAP_AVAILABLE;
         msg.obj = getBitmap();
         handler.sendMessage(msg);
     }
-
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Camera {
+class Camera {
 
-    private static String TAG = "Camera";
+    private static final String TAG = "Camera";
 
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
@@ -73,7 +73,7 @@ public class Camera {
         return chooseBestSize(sizes, width, height);
     }
 
-    public static CameraCharacteristics getCharacteristics(CameraManager cameraManager, String cameraID) {
+    private static CameraCharacteristics getCharacteristics(CameraManager cameraManager, String cameraID) {
 
         if (cameraManager == null || cameraID == null) {
             return null;
@@ -88,7 +88,7 @@ public class Camera {
         return null;
     }
 
-    public static List<Size> getAvailableSizes(CameraCharacteristics characteristics) {
+    private static List<Size> getAvailableSizes(CameraCharacteristics characteristics) {
         List<Size> sizes = new ArrayList<>();
 
         StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -104,7 +104,7 @@ public class Camera {
         return sizes;
     }
 
-    public static Size chooseBestSize(List<Size> sizes, int width, int height) {
+    private static Size chooseBestSize(List<Size> sizes, int width, int height) {
         Log.d(TAG, String.format("Choosing optimal size for: %dx%d", width, height));
 
         // Get sizes and choose a default size.

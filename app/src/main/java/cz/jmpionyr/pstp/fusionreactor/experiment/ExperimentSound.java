@@ -6,9 +6,9 @@ import java.util.Random;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
 
-public class ExperimentSound {
+class ExperimentSound {
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     public static int getRandomProgressMessage() {
         return getRandomMessage(getProgressMessages());

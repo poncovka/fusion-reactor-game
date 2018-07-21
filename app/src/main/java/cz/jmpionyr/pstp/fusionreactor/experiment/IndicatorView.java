@@ -14,9 +14,6 @@ import java.util.List;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
 
-/**
- * TODO: document your custom view class.
- */
 public class IndicatorView extends ImageView {
 
     public static List<Integer> getIndicators() {
@@ -41,7 +38,7 @@ public class IndicatorView extends ImageView {
         return indicators.subList(0, count);
     }
 
-    public static List<Integer> getImages() {
+    private static List<Integer> getImages() {
         List<Integer> list = new ArrayList<>(13);
 
         list.add(R.drawable.aliens);
