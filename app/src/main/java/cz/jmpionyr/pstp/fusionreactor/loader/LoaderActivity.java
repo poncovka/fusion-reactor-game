@@ -196,7 +196,7 @@ public class LoaderActivity extends Activity {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // permission was granted, yay! Do the
                 // contacts-related task you need to do.
-                cameraPreview.reload();
+                cameraPreview.reloadCamera();
             } else {
                 // permission denied, boo! Disable the
                 // functionality that depends on this permission.
@@ -279,7 +279,7 @@ public class LoaderActivity extends Activity {
     protected void onPause() {
 
         if (cameraPreview != null) {
-            cameraPreview.release();
+            cameraPreview.releaseCamera();
         }
 
         if (detector_thread != null) {
