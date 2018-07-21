@@ -28,14 +28,14 @@
             android:id="@+id/firstReactantView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="10dp"
             android:layout_weight="1" />
 
         <cz.jmpionyr.pstp.fusionreactor.ui.TextView
             android:id="@+id/secondReactantView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="10dp"
             android:layout_weight="1" />
     </LinearLayout>
 

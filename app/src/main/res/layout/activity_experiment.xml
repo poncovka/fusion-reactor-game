@@ -22,7 +22,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/reactionView"
+                app:layout_constraintBottom_toTopOf="@+id/messagesLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -123,15 +123,26 @@
 
             </android.support.constraint.ConstraintLayout>
 
-            <cz.jmpionyr.pstp.fusionreactor.ui.TextView
-                android:id="@+id/reactionView"
-                android:layout_width="0dp"
+
+            <LinearLayout
+                android:id="@+id/messagesLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:text="OHEN + VODA = ?"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="@color/black_overlay"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent">
+
+                <cz.jmpionyr.pstp.fusionreactor.ui.TextView
+                    android:id="@+id/reactionView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_margin="15dp"
+                    android:layout_weight="1"
+                    android:text="OHEN + VODA = ?" />
+            </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>
 
