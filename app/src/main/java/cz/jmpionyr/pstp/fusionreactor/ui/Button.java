@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
 
@@ -29,6 +30,6 @@ public class Button extends android.widget.Button {
         Typeface tf = ResourcesCompat.getFont(getContext(), R.font.main_font);
         setTypeface(tf);
         setTextColor(Color.WHITE);
-        setTextSize(20.0f);
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 24.0f);
     }
 }
