@@ -9,11 +9,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
@@ -74,11 +71,16 @@ public class LoaderActivity extends Activity {
 
         @Override
         public boolean handleMessage(Message msg) {
+
             // Empty the queue of messages.
             detector_handler.removeMessages(msg.what);
 
+            if (ignore_messages) {
+                return true;
+            }
+
             // Try to detect the barcode on the received message.
-            String barcode = detectBarcode((Bitmap) msg.obj);
+            String barcode = Detector.detectBarcode(detector, (Bitmap) msg.obj);
 
             // Send reply to the target.
             if (barcode != null) {
@@ -179,9 +181,7 @@ public class LoaderActivity extends Activity {
         main_handler = new Handler(main_callback);
 
         // Create the detector.
-        detector = new BarcodeDetector.Builder(getApplicationContext())
-                .setBarcodeFormats(Barcode.QR_CODE)
-                .build();
+        detector = Detector.getBarcodeDetector(this);
 
         // Update the view.
         detector_watcher.run();
@@ -216,24 +216,6 @@ public class LoaderActivity extends Activity {
         }
     }
 
-    private String detectBarcode(Bitmap imageBitmap) {
-
-        if (imageBitmap == null) {
-            Log.d(TAG, "No bitmap to process.");
-            return null;
-        }
-
-        Frame frame = new Frame.Builder().setBitmap(imageBitmap).build();
-        SparseArray<Barcode> barcodes = detector.detect(frame);
-
-        if (barcodes.size() == 0) {
-            return null;
-        }
-
-        Barcode barcode = barcodes.valueAt(0);
-        return barcode.displayValue;
-    }
-
     private void setReactant(String reactant) {
         if (first_reactant == null) {
             Log.d(TAG, String.format("Reactant #1: %s", reactant));
@@ -261,10 +243,12 @@ public class LoaderActivity extends Activity {
     @Override
     protected void onPause() {
 
+        // Release the camera preview.
         if (cameraPreview != null) {
             cameraPreview.releaseCamera();
         }
 
+        // Release the detector.
         if (detector_thread != null) {
             detector_thread.quitSafely();
             try {
@@ -280,11 +264,10 @@ public class LoaderActivity extends Activity {
             detector_handler = null;
         }
 
-        if (detector != null) {
-            detector.release();
-            detector = null;
-        }
+        Detector.closeBarcodeDetector(detector);
+        detector = null;
 
+        // Release the player.
         if (alertPlayer != null) {
             alertPlayer.release();
             alertPlayer = null;
