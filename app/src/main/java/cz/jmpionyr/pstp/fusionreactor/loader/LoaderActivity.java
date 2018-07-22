@@ -1,17 +1,13 @@
 package cz.jmpionyr.pstp.fusionreactor.loader;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
@@ -26,10 +22,9 @@ import cz.jmpionyr.pstp.fusionreactor.ui.TextView;
 
 public class LoaderActivity extends Activity {
 
-    public static final int LOAD_QR_CODES_REQUEST = 1;
-
     private static final String TAG = "LoaderActivity";
-    private static final int CAMERA_PERMISSION_REQUEST = 1;
+
+    public static final int LOAD_QR_CODES_REQUEST = 1;
 
     private String first_reactant;
     private String second_reactant;
@@ -159,13 +154,17 @@ public class LoaderActivity extends Activity {
         cameraPreview = findViewById(R.id.camera_preview);
         first_message = findViewById(R.id.firstReactantView);
         second_message = findViewById(R.id.secondReactantView);
+
+        if (!Camera.checkPermissions(this)) {
+            Camera.requestPermissions(this);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (!checkCameraPermissions()) {
+        if (!Camera.checkPermissions(this)) {
             setFirstMessage("Kamera neni povolena");
             return;
         }
@@ -186,36 +185,9 @@ public class LoaderActivity extends Activity {
 
         // Update the view.
         detector_watcher.run();
-    }
 
-    private boolean checkCameraPermissions() {
-        // Check the camera permissions.
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST);
-            Log.d(TAG, "Camera permissions requested.");
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == CAMERA_PERMISSION_REQUEST) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // permission was granted, yay! Do the
-                // contacts-related task you need to do.
-                cameraPreview.reloadCamera();
-            } else {
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
-                Log.e(TAG, "Permissions are not granted.");
-            }
-        }
+        // Try to start the camera.
+        cameraPreview.startCamera();
     }
 
     private void setFirstMessage(String message) {

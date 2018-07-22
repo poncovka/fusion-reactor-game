@@ -71,11 +71,26 @@ public class CameraPreview extends TextureView {
         }
     }
 
-    public void reloadCamera() {
+    public void startCamera() {
         // Check the camera permissions.
         if (!Camera.checkPermissions(getContext())){
             return;
         }
+
+        // Check if the surface texture is available.
+        if (!isAvailable()) {
+            return;
+        }
+
+        // The camera was already started.
+        if (cameraHandler != null) {
+            return;
+        }
+
+        Log.d(TAG, "Reloading camera.");
+
+        // Create the camera handler.
+        cameraHandler = new Handler();
 
         // Try to find a camera.
         CameraManager cameraManager = Camera.getCameraManager(getContext());
@@ -84,9 +99,6 @@ public class CameraPreview extends TextureView {
         // Set up the preview size.
         Size best = Camera.getCameraSize(cameraManager, cameraID, getMeasuredWidth(), getMeasuredHeight());
         resizePreview(best);
-
-        // Create the camera handler.
-        cameraHandler = new Handler();
 
         // Open the camera
         Camera.openCamera(cameraManager, cameraID, cameraHandler, cameraCallback);
@@ -158,7 +170,7 @@ public class CameraPreview extends TextureView {
             Log.d(TAG, String.format("The surface is ready with dimensions %dx%d.", width, height));
 
             // Wait for camera.
-            reloadCamera();
+            startCamera();
         }
 
         @Override

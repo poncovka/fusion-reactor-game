@@ -2,6 +2,7 @@ package cz.jmpionyr.pstp.fusionreactor.loader;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
@@ -26,11 +27,16 @@ class Camera {
 
     private static final String TAG = "Camera";
 
+    private static final int PERMISSION_REQUEST = 1;
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
 
     public static boolean checkPermissions(Context context) {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static void requestPermissions(Activity activity) {
+        ActivityCompat.requestPermissions(activity, new String[] {Manifest.permission.CAMERA}, PERMISSION_REQUEST);
     }
 
     public static CameraManager getCameraManager(Context context) {
