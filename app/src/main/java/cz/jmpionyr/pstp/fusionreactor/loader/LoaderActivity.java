@@ -181,7 +181,7 @@ public class LoaderActivity extends Activity {
         main_handler = new Handler(main_callback);
 
         // Create the detector.
-        detector = Detector.getBarcodeDetector(this);
+        detector = Detector.getBarcodeDetector(getApplicationContext());
 
         // Update the view.
         detector_watcher.run();
