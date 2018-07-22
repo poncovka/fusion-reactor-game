@@ -7,9 +7,6 @@
     android:background="@color/black"
     tools:context=".loader.LoaderActivity">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
     <cz.jmpionyr.pstp.fusionreactor.loader.CameraPreview
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
