@@ -30,10 +30,12 @@ public class LoaderActivity extends Activity {
 
     private static final String TAG = "LoaderActivity";
     private static final int CAMERA_PERMISSION_REQUEST = 1;
-    private static final int SET_REACTANT_MESSAGE = 1;
 
     private String first_reactant;
     private String second_reactant;
+    private TextView first_message;
+    private TextView second_message;
+    private MediaPlayer alertPlayer;
 
     private Handler main_handler;
     private boolean ignore_messages;
@@ -43,9 +45,35 @@ public class LoaderActivity extends Activity {
     private HandlerThread detector_thread;
     private Handler detector_handler;
 
-    private TextView first_message;
-    private TextView second_message;
-    private MediaPlayer alertPlayer;
+    private final Runnable detector_watcher = new Runnable() {
+
+        @Override
+        public void run() {
+            if (detector == null) {
+                // Quit if there is no detector.
+                return;
+            }
+            else if (!detector.isOperational()) {
+                // Update the view.
+                setFirstMessage("Detektor stahuje knihovny");
+
+                // Continue to wait for the detector.
+                main_handler.postDelayed(detector_watcher, 1000);
+            }
+            else {
+                // Start the background thread.
+                detector_thread = new HandlerThread("BarcodeDetection");
+                detector_thread.start();
+
+                // Start the background handler.
+                detector_handler = new Handler(detector_thread.getLooper(), detector_callback);
+                cameraPreview.setBitmapHandler(detector_handler);
+
+                // Update the current view.
+                updateMessages();
+            }
+        }
+    };
 
     private final Handler.Callback detector_callback = new Handler.Callback() {
 
@@ -60,7 +88,6 @@ public class LoaderActivity extends Activity {
             // Send reply to the target.
             if (barcode != null) {
                 Message reply = Message.obtain();
-                reply.what = SET_REACTANT_MESSAGE;
                 reply.obj = barcode;
 
                 main_handler.sendMessage(reply);
@@ -82,7 +109,7 @@ public class LoaderActivity extends Activity {
         private final Runnable stop = new Runnable() {
             @Override
             public void run() {
-                quitLoader();
+                onReactantsAreSet();
             }
         };
 
@@ -99,16 +126,16 @@ public class LoaderActivity extends Activity {
             setReactant(reactant);
 
             // Update the view.
-            updateView();
+            updateMessages();
 
             // Play sound.
-            playAlert();
+            alertPlayer.start();
 
             // Ignore messages for a while.
             ignore_messages = true;
 
             // Add a callback.
-            if (isResultComplete()) {
+            if (areReactantsSet()) {
                 main_handler.postDelayed(stop, 1000);
             }
             else {
@@ -139,39 +166,26 @@ public class LoaderActivity extends Activity {
         super.onResume();
 
         if (!checkCameraPermissions()) {
-            first_message.setText("Kamera neni povolena");
-            second_message.setVisibility(View.GONE);
+            setFirstMessage("Kamera neni povolena");
             return;
         }
+
+        // Create the media player.
+        alertPlayer = MediaPlayer.create(this, R.raw.loader_alert);
+
+        // Don't ignore main handler messages.
+        ignore_messages = false;
+
+        // Start the main handler.
+        main_handler = new Handler(main_callback);
 
         // Create the detector.
         detector = new BarcodeDetector.Builder(getApplicationContext())
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
 
-        if (!detector.isOperational()) {
-            first_message.setText("Detektor stahuje knihovny");
-            second_message.setVisibility(View.GONE);
-            return;
-        }
-
-        // Start the main handler.
-        main_handler = new Handler(main_callback);
-        ignore_messages = false;
-
-        // Start the background thread.
-        detector_thread = new HandlerThread("BarcodeDetection");
-        detector_thread.start();
-
-        // Start the background handler.
-        detector_handler = new Handler(detector_thread.getLooper(), detector_callback);
-        cameraPreview.setBitmapHandler(detector_handler);
-
-        // Crete the media player.
-        alertPlayer = MediaPlayer.create(this, R.raw.loader_alert);
-
         // Update the view.
-        updateView();
+        detector_watcher.run();
     }
 
     private boolean checkCameraPermissions() {
@@ -204,8 +218,33 @@ public class LoaderActivity extends Activity {
         }
     }
 
+    private void setFirstMessage(String message) {
+        first_message.setText(message);
+        second_message.setVisibility(View.GONE);
+    }
+
+    private void setSecondMessage(String message) {
+        second_message.setText(message);
+        second_message.setVisibility(View.VISIBLE);
+    }
+
+    private void updateMessages() {
+        if (first_reactant == null) {
+            setFirstMessage("Nactete reaktant #1");
+        }
+        else{
+            setFirstMessage(String.format("Reaktant #1: %s", first_reactant));
+
+            if (second_reactant == null) {
+                setSecondMessage("Nactete reaktant #2");
+            }
+            else {
+                setSecondMessage(String.format("Reaktant #2: %s", second_reactant));
+            }
+        }
+    }
+
     private String detectBarcode(Bitmap imageBitmap) {
-        // Log.d(TAG, "Processing the bitmap.");
 
         if (imageBitmap == null) {
             Log.d(TAG, "No bitmap to process.");
@@ -224,48 +263,21 @@ public class LoaderActivity extends Activity {
     }
 
     private void setReactant(String reactant) {
-        String message = "Nelze nastavit reaktant.";
-
         if (first_reactant == null) {
+            Log.d(TAG, String.format("Reactant #1: %s", reactant));
             first_reactant = reactant;
-            message = String.format("Nastaven reaktant #1: %s", reactant);
         }
         else if (second_reactant == null) {
+            Log.d(TAG, String.format("Reaktant #2: %s", reactant));
             second_reactant = reactant;
-            message = String.format("Nastaven reaktant #2: %s", reactant);
         }
-
-        Log.d(TAG, message);
     }
 
-    private void playAlert() {
-        alertPlayer.start();
-    }
-
-    private void updateView() {
-        if (first_reactant == null) {
-            first_message.setText("Nactete reaktant #1");
-            second_message.setVisibility(View.GONE);
-        }
-        else {
-            first_message.setText(String.format("Reaktant #1: %s", first_reactant));
-            second_message.setVisibility(View.VISIBLE);
-        }
-
-        if (second_reactant == null) {
-            second_message.setText("Nactete reaktant #2");
-        }
-        else {
-            second_message.setText(String.format("Reaktant #2: %s", second_reactant));
-        }
-
-    }
-
-    private boolean isResultComplete() {
+    private boolean areReactantsSet() {
         return first_reactant != null && second_reactant != null;
     }
 
-    private void quitLoader() {
+    private void onReactantsAreSet() {
         Intent result = new Intent();
         result.putExtra(ExperimentActivity.FIRST_REACTANT, first_reactant);
         result.putExtra(ExperimentActivity.SECOND_REACTANT, second_reactant);
