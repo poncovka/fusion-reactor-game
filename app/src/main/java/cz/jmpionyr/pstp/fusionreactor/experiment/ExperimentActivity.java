@@ -6,9 +6,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -144,13 +141,9 @@ public class ExperimentActivity extends Activity {
 
         // Set the reaction.
         reaction.setText(String.format("%s + %s = %s", first_reactant, second_reactant, getProduct()));
-        reactionLayout.setBackgroundResource(getBackgroundColor());
+        reaction.setImportant(true);
 
-        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setRepeatCount(Animation.INFINITE);
-        animation.setInterpolator(new LinearInterpolator());
-        animation.setDuration(800);
-        reaction.startAnimation(animation);
+        reactionLayout.setBackgroundResource(getBackgroundColor());
 
         // Set the button.
         button.setText("Ukoncit");

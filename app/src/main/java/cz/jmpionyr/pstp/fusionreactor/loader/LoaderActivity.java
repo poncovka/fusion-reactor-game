@@ -201,11 +201,16 @@ public class LoaderActivity extends Activity {
     }
 
     private void updateMessages() {
+        first_message.setImportant(false);
+        second_message.setImportant(false);
+
         if (first_reactant == null) {
             setFirstMessage("Nactete reaktant #1");
+            first_message.setImportant(true);
         }
         else{
             setFirstMessage(String.format("Reaktant #1: %s", first_reactant));
+            second_message.setImportant(true);
 
             if (second_reactant == null) {
                 setSecondMessage("Nactete reaktant #2");

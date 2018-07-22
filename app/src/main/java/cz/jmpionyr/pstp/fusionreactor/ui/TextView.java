@@ -7,6 +7,9 @@ import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 
 import cz.jmpionyr.pstp.fusionreactor.R;
 
@@ -47,5 +50,23 @@ public class TextView extends android.widget.TextView {
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 24.0f);
     }
 
+    public void setImportant(boolean isImportant) {
+
+        // Clear previous animations.
+        this.clearAnimation();
+
+        // Do nothing.
+        if (!isImportant) {
+            return;
+        }
+
+        // Start animation.
+        AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setRepeatCount(Animation.INFINITE);
+        animation.setInterpolator(new LinearInterpolator());
+        animation.setDuration(800);
+
+        this.startAnimation(animation);
+    }
 
 }
