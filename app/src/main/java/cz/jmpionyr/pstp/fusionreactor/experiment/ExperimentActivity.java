@@ -10,6 +10,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ public class ExperimentActivity extends Activity {
 
     private Button button;
     private TextView reaction;
+    private LinearLayout reactionLayout;
     private List<IndicatorView> errors;
 
     private boolean isExperimentSuccessful() {
@@ -80,8 +82,9 @@ public class ExperimentActivity extends Activity {
 
         // Set up the view.
         setContentView(R.layout.activity_experiment);
-        reaction = findViewById(R.id.reactionView);
         button = findViewById(R.id.startButton);
+        reaction = findViewById(R.id.reactionView);
+        reactionLayout = findViewById(R.id.reactionLayout);
 
         // Set up the indicators.
         initializeIndicators();
@@ -141,10 +144,7 @@ public class ExperimentActivity extends Activity {
 
         // Set the reaction.
         reaction.setText(String.format("%s + %s = %s", first_reactant, second_reactant, getProduct()));
-
-        if (!isExperimentSuccessful()) {
-            reaction.setTextColor(getResources().getColor(R.color.bright_red));
-        }
+        reactionLayout.setBackgroundResource(getBackgroundColor());
 
         AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
         animation.setRepeatCount(Animation.INFINITE);
@@ -241,6 +241,15 @@ public class ExperimentActivity extends Activity {
         }
         else {
             return 4;
+        }
+    }
+
+    private int getBackgroundColor() {
+        if (isExperimentSuccessful()) {
+            return R.color.success_overlay;
+        }
+        else {
+            return R.color.failure_overlay;
         }
     }
 
