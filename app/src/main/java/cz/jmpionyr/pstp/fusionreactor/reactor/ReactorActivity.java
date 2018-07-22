@@ -50,11 +50,11 @@ public class ReactorActivity extends Activity {
     }
 
     public void testSuccessfulExperiment(View view) {
-        runExperiment("OHEN", "VODA");
+        runExperiment("ELEKTRICKY_DRAT", "SVETLO");
     }
 
     public void testUnsuccessfulExperiment(View view) {
-        runExperiment("ZEME", "PARA");
+        runExperiment("ROSTLINA", "KOV");
     }
 
     public void quitReactor(View view) {
