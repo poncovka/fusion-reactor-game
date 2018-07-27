@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:onClick="testSuccessfulExperiment"
             android:text="TEST: USPESNY EXPERIMENT"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/button2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -66,6 +67,7 @@
             android:layout_marginBottom="8dp"
             android:onClick="testUnsuccessfulExperiment"
             android:text="TEST: NEUSPESNY EXPERIMENT"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
